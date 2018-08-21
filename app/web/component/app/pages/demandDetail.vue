@@ -16,6 +16,12 @@
           <div class="other-detail">
             <div>
               <span class="title">
+                <i class="icon-calendar"></i>
+              </span>
+              <span class="content"> {{demand.releaseTime}}发布</span>
+            </div>
+            <div>
+              <span class="title">
                 <i class="icon-map-marker"></i>
               </span>
               <span class="content"> {{demand.place}}</span>
@@ -63,8 +69,15 @@
           </div>
         </div>
         <hr>
-        <div class="receive-demand" @click="receiveDemand(demand._id)" v-show="user.userType === 0">
-          <div class="receive-btn">接下需求</div>
+        <div class="received" v-if="received">
+          <router-link to="/demandMgmt">
+            查看其它已接需求
+            <i class="icon-double-angle-right"></i>
+          </router-link>
+
+        </div>
+        <div class="receive-demand" @click="receiveDemand(demand._id)" v-else>
+          <div class="receive-btn" v-show="user.userType === 0">接下需求</div>
         </div>
       </div>
     </div>
@@ -72,15 +85,19 @@
 </template>
 
 <script>
-import {getDemandById} from 'api';
+import {getDemandById,updateDemand,checkDemand} from 'api';
 import {mapState} from 'vuex';
+import { log } from 'util';
 
 export default {
   created(){
     this.id = this.$route.params.id;
     getDemandById(this,{demandId:this.id}).then(result => {
       this.demand = result;
-    })
+    });
+    checkDemand(this,{demandId:this.id,creatorId:this.user._id}).then(result => {
+      this.received = result;
+    });
   },
   watch:{
      $route(to,from){
@@ -88,7 +105,10 @@ export default {
       if(tmp[1] === 'demandDetail' && tmp[2]){
          getDemandById(this,{demandId:tmp[2]}).then(result => {
            this.demand = result;
-         })
+         });
+         checkDemand(this,{demandId:tmp[2],creatorId:this.user._id}).then(result => {
+           this.received = result;
+         });
       }
     }
   },
@@ -129,7 +149,8 @@ export default {
           url:
             'https://images.snapwi.re/1f2a/59bc2f192a3919f2778b4582.w314.h314.jpg'
         }
-      ]
+      ],
+      received:false
     };
   },
   methods: {
@@ -138,8 +159,10 @@ export default {
         'background-image': `url(${image})`
       };
     },
-    receiveDemand(demandId){
-     console.log(demandId);
+    receiveDemand(demand_id){
+     updateDemand(this,{demandId:demand_id,creatorId:this.user._id}).then(result => {
+        this.$router.push('/demandMgmt');      
+     });
     }
   }
 };
@@ -234,6 +257,17 @@ export default {
       margin: 10px;
     }
   }
+  .received {
+    text-align: center;
+    margin-top: 25px;
+    color: #08af7f;
+    font-size: 22px;
+    font-family: '宋体';
+    &:hover {
+      cursor: pointer;
+      text-decoration: none;
+    }
+  }
   .receive-demand {
     text-align: center;
     margin-top: 25px;
@@ -247,6 +281,9 @@ export default {
       background-color: #08af7f;
       font-size: 22px;
       font-family: '宋体';
+      &:hover {
+        cursor: pointer;
+      }
     }
   }
 }

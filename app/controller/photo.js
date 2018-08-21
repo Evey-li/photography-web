@@ -1,5 +1,7 @@
 const Controller = require('egg').Controller;
 const Response = require('../util/response');
+const moment = require('moment');
+moment.locale('zh-CN');
 
 class PhotoController extends Controller {
   async uploadPhoto() {
@@ -15,9 +17,50 @@ class PhotoController extends Controller {
         imgUrl: photo.imgUrl,
         photoDesc: photo.photoDesc,
         categoryId: photo.categoryId,
-        uploadTime: Date.now()
+        uploadTime: moment().format('LL')
       });
       result = new Response(Response.SUCCESS, res, null);
+    }
+    this.ctx.body = result;
+  }
+  async uploadPhotoList() {
+    let result = '';
+    const {
+      photoList,
+      categoryId,
+      demandId,
+      creatorId
+    } = this.ctx.request.body;
+    if (this.ctx.helper.checkNullOrUndefined(photoList, categoryId, demandId, creatorId)) {
+      result = new Response(Response.PARAM_ERROR, null, '参数有误');
+    } else {
+      let count = 0;
+      const photoDesc = (await this.ctx.service.demand.getDemandById(demandId)).title;
+      for (let i = 0; i < photoList.length; i++) {
+        const res = await this.ctx.service.photo.save({
+          width: photoList[i].width,
+          height: photoList[i].height,
+          creatorId,
+          imgUrl: photoList[i].src,
+          photoDesc,
+          categoryId,
+          demandId,
+          uploadTime: moment().format('LL')
+        });
+        if (res) count++;
+      }
+      if (count !== 0) result = new Response(Response.SUCCESS, true, null);
+    }
+    this.ctx.body = result;
+  }
+  async getPhotosByCreatorId() {
+    let result = '';
+    const userId = this.ctx.request.body.userId;
+    if (!userId) {
+      result = new Response(Response.PARAM_ERROR, null, '参数有误');
+    } else {
+      const photos = await this.ctx.service.photo.getPhotosByCreatorId(userId);
+      result = new Response(Response.SUCCESS, photos, null);
     }
     this.ctx.body = result;
   }

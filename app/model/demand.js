@@ -15,6 +15,7 @@ module.exports = app => {
     tel: String,
     creatorId: ObjectId,
     releaseTime: String,
+    receiveTime: String,
     finishTime: String,
     preference: String,
     place: String

@@ -158,15 +158,12 @@ export default {
       });
       this.currentPhoto = item;
 
-      findFollowRecord(this,{followId:item.creatorId,followerId:this.user._id})
-      .then(result => {
-        // console.log("***********查找关注记录：************");
-        // console.log(result);
-        this.isFollowed = result;
-        // console.log("isFollowed:");
-        // console.log(this.isFollowed);
-        
-      })
+      if(this.user._id){
+         findFollowRecord(this,{followId:item.creatorId,followerId:this.user._id})
+          .then(result => {
+          this.isFollowed = result;
+        });
+      }
       this.dialogShow = !this.dialogShow;
       this.$refs.content.parentNode.parentNode.parentNode.className +=
         'overHid';

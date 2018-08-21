@@ -16,6 +16,8 @@ module.exports = app => {
   app.post('/api/getPhotoList', app.controller.photo.getPhotoList);
   app.post('/api/updatePhotoInfo', app.controller.photo.updatePhotoInfo);
   app.post('/api/uploadPhoto', app.controller.photo.uploadPhoto);
+  app.post('/api/getPhotosByCreatorId', app.controller.photo.getPhotosByCreatorId);
+  app.post('/api/uploadPhotoList', app.controller.photo.uploadPhotoList);
 
   app.post('/api/addLike', app.controller.like.addLike);
   app.post('/api/removeLike', app.controller.like.removeLike);
@@ -32,12 +34,17 @@ module.exports = app => {
   app.post('/api/getDemandList', app.controller.demand.getDemandList);
   app.post('/api/getDemandById', app.controller.demand.getDemandById);
   app.get('/api/getAllDemandsByUser', app.controller.demand.getAllDemandsByUser);
+  app.post('/api/updateDemand', app.controller.demand.updateDemand);
+  app.post('/api/checkDemand', app.controller.demand.checkDemand);
+  app.post('/api/confirmFinish', app.controller.demand.confirmFinish);
 
   app.post('/api/avatarUpload', app.controller.file.uploadAvatar);
   app.post('/api/uploadFile', app.controller.file.uploadFile);
 
   app.post('/api/addCategory', app.controller.category.addCategory);
   app.get('/api/categoryList', app.controller.category.categoryList);
+
+  // app.post('/api/addOrder', app.controller.order.addOrder);
 
   app.get('/*', app.controller.app.index);
 };

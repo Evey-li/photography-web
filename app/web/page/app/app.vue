@@ -104,6 +104,9 @@ table {
 a {
   color: inherit;
   text-decoration: none;
+  &:hover {
+    text-decoration: none;
+  }
 }
 ul {
   list-style: none;

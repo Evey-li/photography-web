@@ -14,6 +14,24 @@ module.exports = app => {
       return await newPhoto.save();
     }
 
+    async getPhotosByCreatorId(id) {
+      const photo = await this.ctx.model.Photo.find({
+        creatorId: id
+      }, {
+        __v: 0
+      });
+      return photo;
+    }
+
+    async getPhotoByDemandId(id) {
+      const photo = await this.ctx.model.Photo.find({
+        demandId: id
+      }, {
+        __v: 0
+      });
+      return photo;
+    }
+
     async removePhotoById(p_id) {
       const photo = await this.ctx.model.Photo.findOne({
         _id: p_id

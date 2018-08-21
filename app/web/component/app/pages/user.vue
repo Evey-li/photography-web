@@ -81,7 +81,7 @@
         <waterfall :min-line-gap="250" :max-line-gap="350" :line-gap="300" :watch="items" :auto-resize="true">
           <!-- each component is wrapped by a waterfall slot -->
           <waterfall-slot :class="{photoBox:true}" v-for="(item, index) in items" :width="item.width" :height="item.height" :order="index" :key="item.id">
-            <div class="item" :style="backgroundImgStyle(item.image)">
+            <div class="item" :style="backgroundImgStyle(item.imgUrl)">
             </div>
           </waterfall-slot>
         </waterfall>
@@ -97,11 +97,8 @@ import WaterfallSlot from 'vue-waterfall/lib/waterfall-slot';
 import UploadDialog from '../components/UploadDialog';
 import {mapState} from 'vuex';
 import {getUserById} from 'api';
-import {getfollowers} from 'api';
-import {getfollows} from 'api';
-import {findFollowRecord} from 'api';
-import {addFollow} from 'api';
-import {removeFollow} from 'api';
+import {getfollowers,getfollows,findFollowRecord,addFollow,removeFollow} from 'api';
+import {getPhotosByCreatorId} from 'api';
 import { Result } from 'range-parser';
 import { toUnicode } from 'punycode';
 import { log } from 'util';
@@ -113,6 +110,7 @@ export default {
     if(this.id){
       this.handleCurrentUser(this.id);
       this.findFollowRecord(this.id);
+      this.getPhotosByCreatorId(this.id);
     }
   },
   watch:{
@@ -121,6 +119,7 @@ export default {
       if(tmp[1] === 'user' && tmp[2]){
         this.handleCurrentUser(tmp[2]);
         this.findFollowRecord(tmp[2]);
+        this.getPhotosByCreatorId(tmp[2]);
       }
     }
   },
@@ -136,138 +135,7 @@ export default {
       isBusy: false,
       isOwner:true,
       align: 'center',
-      items: [
-        {
-          width: 314,
-          height: 210,
-          like: false,
-          creator_name: 'Evey',
-          creator_img:
-            'https://cdn.pixabay.com/photo/2018/07/10/10/29/girl-3528292__340.jpg',
-          image:
-            'https://images.snapwi.re/c18e/5af2feb29e38474b4e8b456c.w314.jpg'
-        },
-        {
-          width: 314,
-          height: 200,
-          like: false,
-          creator_name: 'John',
-          creator_img:
-            ' https://cdn.pixabay.com/photo/2018/01/31/09/42/people-3120717__340.jpg',
-          image:
-            'https://images.snapwi.re/729e/5b295d6358e66cc47b093f08.w314.jpg'
-        },
-        {
-          width: 314,
-          height: 471,
-          like: false,
-          creator_name: 'Evey',
-          creator_img:
-            'https://cdn.pixabay.com/photo/2018/07/10/10/29/girl-3528292__340.jpg',
-          image:
-            'https://images.snapwi.re/4287/5b2879f32ae492191994579a.w314.jpg'
-        },
-        {
-          width: 314,
-          height: 210,
-          like: false,
-          creator_name: 'Evey',
-          creator_img:
-            'https://cdn.pixabay.com/photo/2018/07/10/10/29/girl-3528292__340.jpg',
-          image:
-            'https://images.snapwi.re/c752/5b081bbe5adfd30731e5672e.w314.jpg'
-        },
-        {
-          width: 314,
-          height: 470,
-          like: false,
-          creator_name: 'Evey',
-          creator_img:
-            'https://cdn.pixabay.com/photo/2018/07/10/10/29/girl-3528292__340.jpg',
-          image:
-            'https://images.snapwi.re/08c1/5b202a43b5da83633087a1ac.w314.jpg'
-        },
-        {
-          width: 314,
-          height: 210,
-          like: false,
-          creator_name: 'Evey',
-          creator_img:
-            'https://cdn.pixabay.com/photo/2018/07/10/10/29/girl-3528292__340.jpg',
-          image:
-            'https://images.snapwi.re/4b26/5b22e87b7e11fa77675d7423.w314.jpg'
-        },
-        {
-          width: 314,
-          height: 471,
-          like: false,
-          creator_name: 'Evey',
-          creator_img:
-            'https://cdn.pixabay.com/photo/2018/07/10/10/29/girl-3528292__340.jpg',
-          image:
-            'https://images.snapwi.re/afc1/5a8669b1144940780e8b4595.w314.jpg'
-        },
-        {
-          width: 314,
-          height: 471,
-          like: false,
-          creator_name: 'Evey',
-          creator_img:
-            'https://cdn.pixabay.com/photo/2018/07/10/10/29/girl-3528292__340.jpg',
-          image:
-            'https://images.snapwi.re/ad9c/5a294e744a391930638b4572.w314.jpg'
-        },
-        {
-          width: 314,
-          height: 471,
-          like: false,
-          creator_name: 'Evey',
-          creator_img:
-            'https://cdn.pixabay.com/photo/2018/07/10/10/29/girl-3528292__340.jpg',
-          image:
-            'https://images.snapwi.re/4a0b/5a293d174a3919b9558b4575.w314.jpg'
-        },
-        {
-          width: 314,
-          height: 471,
-          like: false,
-          creator_name: 'Evey',
-          creator_img:
-            'https://cdn.pixabay.com/photo/2018/07/10/10/29/girl-3528292__340.jpg',
-          image:
-            'https://images.snapwi.re/06f2/5a294f1b4a39198e628b4577.w314.jpg'
-        },
-        {
-          width: 314,
-          height: 215,
-          like: false,
-          creator_name: 'Evey',
-          creator_img:
-            'https://cdn.pixabay.com/photo/2018/07/10/10/29/girl-3528292__340.jpg',
-          image:
-            'https://images.snapwi.re/329a/5a294ece4a3919d1628b4573.w314.jpg'
-        },
-        {
-          width: 314,
-          height: 471,
-          like: false,
-          creator_name: 'Evey',
-          creator_img:
-            'https://cdn.pixabay.com/photo/2018/07/10/10/29/girl-3528292__340.jpg',
-          image:
-            'https://images.snapwi.re/2893/5a29502b4a391912658b456e.w314.jpg'
-        },
-        {
-          width: 314,
-          height: 393,
-          like: false,
-          creator_name: 'Evey',
-          creator_img:
-            'https://cdn.pixabay.com/photo/2018/07/10/10/29/girl-3528292__340.jpg',
-          image:
-            'https://images.snapwi.re/b9e1/5a858f3b3d2d2ea9098b458a.w314.jpg'
-        }
-      ],
+      items:[],
       currentUser:{},
       fansNum:0,
       followsNum:0,
@@ -278,6 +146,13 @@ export default {
     ...mapState(['user']),
   },
   methods: {
+    getPhotosByCreatorId(id){
+      getPhotosByCreatorId(this,{userId:id}).then(result => {
+        console.log("*********************");
+        console.log(result);
+        this.items = result;
+      })
+    },
     findFollowRecord(currentId){
       findFollowRecord(this,{followId:currentId,followerId:this.user._id})
       .then(result => {
@@ -493,6 +368,7 @@ export default {
     right: 5px;
     bottom: 5px;
     background-repeat: no-repeat;
+    background-size: cover;
     color: #ccc;
     font-family: '宋体';
   }

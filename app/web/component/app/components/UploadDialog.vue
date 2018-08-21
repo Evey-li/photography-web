@@ -89,7 +89,7 @@ export default {
           file.width=image.width;
           file.height=image.height;
           _this.photo.width = file.width;
-          _this.photo.height = file.height;   
+          _this.photo.height = file.height;     
         };
         image.src = file.src;
       };

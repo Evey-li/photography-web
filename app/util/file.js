@@ -4,7 +4,7 @@ const path = require('path');
 const tmpDir = path.join(__dirname, '../../tmp/');
 
 function createTmpName() {
-  return `${tmpDir}tmpImagefile`;
+  return `${tmpDir}tmpImagefile_${Date.now()}`;
 }
 /**
  * 保存文件到临时目录

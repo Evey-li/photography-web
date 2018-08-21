@@ -48,8 +48,6 @@ export default {
     });
     getDemandsNum(this).then(result => {
       this.totalPages = Math.ceil(result/this.pageSize);
-      console.log("**********totalpages***********");
-      console.log(this.totalPages);
     });
   },
   data() {
@@ -73,7 +71,6 @@ export default {
       });
     },
     onPageItemClick(page) {
-      console.log(page);
       getDemandList(this,{condition:this.filter,pageSize:this.pageSize,currentPage:page}).then(result => {
         this.demands = result;  
       });
@@ -147,8 +144,8 @@ export default {
     z-index: 100;
     width: 25%;
     height: 300px;
+    margin: 20px 10px;
     background-color: #71726e;
-    margin: 10px;
     background-size: cover;
     background-position: center center;
     background-repeat: no-repeat;

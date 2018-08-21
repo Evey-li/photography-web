@@ -9,6 +9,7 @@ import DemandDetail from './pages/demandDetail.vue';
 import User from './pages/user.vue';
 import DemandMgmt from './pages/demandMgmt.vue';
 import Settings from './pages/settings.vue';
+import uploadPhotos from './pages/uploadPhotos.vue';
 Vue.use(VueRouter);
 
 const router = new VueRouter({
@@ -54,6 +55,11 @@ const router = new VueRouter({
   {
     path: '/demandMgmt',
     component: DemandMgmt,
+  },
+  {
+    path: '/uploadPhotos/:id',
+    name: 'uploadPhoto',
+    component: uploadPhotos,
   },
   {
     path: '/settings',

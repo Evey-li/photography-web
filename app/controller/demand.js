@@ -78,9 +78,56 @@ class DemandController extends Controller {
       result = new Response(Response.USER_NOT_EXIST, null, '用户未登录');
     } else {
       const demands = await this.ctx.service.demand.getAllDemandsByUser(this.ctx.user);
+      for (let i = 0; i < demands.length; i++) {
+        const res = await this.ctx.service.photo.getPhotoByDemandId(demands[i]._id);
+        if (res.length === 0) {
+          demands[i].hasPhotos = false;
+        } else {
+          demands[i].hasPhotos = true;
+        }
+      }
       result = new Response(Response.SUCCESS, demands, null);
     }
     this.ctx.body = result;
+  }
+  async updateDemand() {
+    let result = '';
+    const {
+      demandId,
+      creatorId
+    } = this.ctx.request.body;
+    if (this.ctx.helper.checkNullOrUndefined(demandId, creatorId)) {
+      result = new Response(Response.PARAM_ERROR, null, '参数有误');
+    } else {
+      const demand = await this.service.demand.getDemandById(demandId);
+      demand.creatorId = creatorId;
+      demand.receiveTime = moment().format('LL');
+      const res = await this.ctx.service.demand.update(demand);
+      result = new Response(Response.SUCCESS, res, null);
+    }
+    this.ctx.body = result;
+  }
+  async checkDemand() {
+    let result = '';
+    const {
+      demandId,
+      creatorId
+    } = this.ctx.request.body;
+    if (this.ctx.helper.checkNullOrUndefined(demandId, creatorId)) {
+      result = new Response(Response.PARAM_ERROR, null, '参数有误');
+    } else {
+      const res = await this.ctx.service.demand.checkDemand(demandId, creatorId);
+      result = new Response(Response.SUCCESS, res, null);
+    }
+    this.ctx.body = result;
+  }
+  async confirmFinish() {
+    const demand_id = this.ctx.request.body.demandId;
+    const demand = await this.service.demand.getDemandById(demand_id);
+    demand.status = '已完成';
+    demand.finishTime = moment().format('LL');
+    const res = await this.ctx.service.demand.update(demand);
+    this.ctx.body = new Response(Response.SUCCESS, res, null);
   }
 }
 module.exports = DemandController;

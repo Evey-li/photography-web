@@ -15,26 +15,37 @@
           <thead>
             <th>需求名称</th>
             <th>需求人</th>
-            <th>发布日期</th>
             <th>奖励报酬</th>
             <th>当前状态</th>
             <th>创作人</th>
+            <th>接单日期</th>
             <th>完成日期</th>
             <th></th>
           </thead>
           <tbody>
-            <tr v-for="(demand,index) in demands" :key="demand._id">
-              <td>{{demand.title}}</td>
+            <tr v-for="demand in demands" :key="demand._id">
+              <td>
+                <router-link :to="{name:'detail',params: {id:demand._id}}" class="viewDetail">
+                  {{demand.title}}
+                </router-link>
+              </td>
               <td>{{demand.demanderName}}</td>
-              <td>{{demand.releaseTime}}</td>
               <td>￥{{demand.payment}}</td>
               <td>{{demand.status}}</td>
               <td v-if="demand.creatorName">{{demand.creatorName}}</td>
               <td v-else>暂无</td>
+              <td v-if="demand.receiveTime">{{demand.receiveTime}}</td>
+              <td v-else>暂无</td>
               <td v-if="demand.finishTime">{{demand.finishTime}}</td>
               <td v-else>暂无</td>
-              <td>
-                <span class="viewDetail">查看</span>
+              <td v-if="user.userType===0">
+                <div v-if="demand.status==='未完成'">
+                  <span class="confirmFinish" @click="confirmFinish(demand._id)">确认完成</span>
+                </div>
+                <div v-else>
+                  <router-link :to="{name:'uploadPhoto',params: {id:demand._id}}" class="finished" v-show="!demand.hasPhotos">上传分享</router-link>
+                  <span v-show="demand.hasPhotos">已分享</span>
+                </div>
               </td>
             </tr>
           </tbody>
@@ -50,21 +61,26 @@
 </template>
 
 <script>
-import {getAllDemandsByUser} from 'api';
+import {getAllDemandsByUser,confirmFinish} from 'api';
+import {mapState} from 'vuex';
+
 export default {
+  created(){
+    getAllDemandsByUser(this).then(result => {
+       this.demands = result;
+    });
+  },
+   computed:{
+    ...mapState(['user'])
+  },
   data() {
     return {
       currentIndex: 0,
       demands:[]
     };
   },
-  created(){
-     getAllDemandsByUser(this).then(result => {
-         this.demands = result;
-       })
-  },
+
   methods: {
-   
     getAllDemand(){
        this.currentIndex = 0;
        getAllDemandsByUser(this).then(result => {
@@ -94,6 +110,16 @@ export default {
          }
          this.demands = finishedDemands;
        })
+    },
+    confirmFinish(demand_id){
+      if(demand_id){
+        confirmFinish(this,{demandId:demand_id}).then(res => {
+           getAllDemandsByUser(this).then(result => {
+             this.demands = result;
+           });
+          this.$toasted.show("恭喜您完成一单需求，快去分享您此次的作品，吸引更多需求人吧~");
+        })
+      }
     }
   }
 };
@@ -113,7 +139,7 @@ export default {
   border-top-right-radius: 5px;
 }
 .main {
-  width: 60%;
+  width: 70%;
   height: 500px;
   margin: 30px 0;
   .mgmt-filter {
@@ -133,16 +159,37 @@ export default {
   }
   table {
     text-align: center;
-    .viewDetail {
+    .confirmFinish {
       display: inline-block;
-      width: 50px;
-      height: 30px;
+      width: 90px;
+      height: 35px;
+      line-height: 35px;
       border: 1px solid #08af7f;
       border-radius: 5px;
       background-color: #08af7f;
       color: #fff;
       &:hover {
         cursor: pointer;
+      }
+    }
+    .finished {
+      display: inline-block;
+      width: 90px;
+      height: 35px;
+      line-height: 35px;
+      color: #08af7f;
+      border: 1px solid #08af7f;
+      border-radius: 5px;
+      &:hover {
+        cursor: pointer;
+        text-decoration: none;
+      }
+    }
+    .viewDetail {
+      color: #08af7f;
+      font-size: 17px;
+      &:hover {
+        text-decoration: none;
       }
     }
   }

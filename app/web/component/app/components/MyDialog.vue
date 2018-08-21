@@ -15,8 +15,8 @@
 
             <div class="img-info">
               <div class="title">
-                来自需求:
-                <span class="demand-name">不一样的海滩假日</span>
+                上传时间:
+                <span class="upload-time">{{currentPhoto.uploadTime}}</span>
               </div>
               <div class="like-num">
                 <i class="icon-heart"></i>
@@ -181,14 +181,16 @@ export default {
   align-items: center;
   justify-content: center;
   .dialog_head {
+    // border: 1px solid #fff;
     background-position: center center;
     width: 80%;
     height: 500px;
     background-size: contain;
     background-repeat: no-repeat;
-    .dialog-like,
     .dialog-close {
-      display: inline-block;
+      position: absolute;
+      right: 11%;
+      top: 2%;
       font-size: 24px;
       width: 40px;
       height: 40px;
@@ -196,11 +198,6 @@ export default {
       text-align: center;
       background: rgba(0, 0, 0, 0.5);
       border-radius: 50%;
-      margin: 5px 10px;
-    }
-    .dialog-close {
-      position: absolute;
-      right: 0;
     }
   }
   .dialog_main {
@@ -223,7 +220,7 @@ export default {
       }
       .title {
         font-size: 17px;
-        .demand-name {
+        .upload-time {
           font-size: 20px;
           &:hover {
             color: #08af7f;

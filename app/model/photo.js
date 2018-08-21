@@ -11,7 +11,7 @@ module.exports = app => {
     demandId: ObjectId,
     photoDesc: String,
     categoryId: ObjectId,
-    uploadTime: Date,
+    uploadTime: String,
     likes: Number
   });
   return mongoose.model('photos', PhotoSchema);

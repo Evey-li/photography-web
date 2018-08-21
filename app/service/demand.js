@@ -17,6 +17,11 @@ module.exports = app => {
             foreignField: 'demandId',
             as: 'photo'
           }
+        }, {
+          $match: {
+            status: '未完成',
+            creatorId: null
+          }
         }]).skip((currentPage - 1) * pageSize).limit(pageSize);
       } else if (condition === 'recent') {
         demands = await this.ctx.model.Demand.aggregate([{
@@ -28,6 +33,11 @@ module.exports = app => {
           }
         },
         {
+          $match: {
+            status: '未完成',
+            creatorId: null
+          }
+        }, {
           $sort: {
             releaseTime: -1
           }
@@ -43,6 +53,12 @@ module.exports = app => {
           }
         },
         {
+          $match: {
+            status: '未完成',
+            creatorId: null
+          }
+        },
+        {
           $sort: {
             payment: -1
           }
@@ -55,6 +71,12 @@ module.exports = app => {
             localField: '_id',
             foreignField: 'demandId',
             as: 'photo'
+          }
+        },
+        {
+          $match: {
+            status: '未完成',
+            creatorId: null
           }
         },
         {
@@ -95,6 +117,26 @@ module.exports = app => {
         }
       }
       return demands;
+    }
+    async checkDemand(demandId, creatorId) {
+      const demand = await this.ctx.model.Demand.findOne({
+        _id: demandId,
+        creatorId
+      });
+      if (!demand) {
+        return false;
+      } else {
+        return true;
+      }
+    }
+    async update(demand) {
+      const id = demand._id;
+      delete demand._id;
+      await this.ctx.model.Demand.update({
+        _id: id
+      }, {
+        $set: demand
+      });
     }
   }
   return Demand;

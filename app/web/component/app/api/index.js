@@ -108,6 +108,10 @@ exports.getUserById = (vue, data) => {
   return postRequest(vue, '/api/getUserById', data);
 };
 
+
+exports.getPhotosByCreatorId = (vue, data) => {
+  return postRequest(vue, '/api/getPhotosByCreatorId', data);
+};
 exports.getPhotosNum = (vue, data) => {
   return postRequest(vue, '/api/getPhotosNum', data);
 };
@@ -119,6 +123,9 @@ exports.getPhotoList = (vue, data) => {
 };
 exports.updatePhotoInfo = (vue, data) => {
   return postRequest(vue, '/api/updatePhotoInfo', data);
+};
+exports.uploadPhotoList = (vue, data) => {
+  return postRequest(vue, '/api/uploadPhotoList', data);
 };
 
 exports.addLike = (vue, data) => {
@@ -165,6 +172,15 @@ exports.getDemandById = (vue, data) => {
 exports.getAllDemandsByUser = vue => {
   return getRequest(vue, '/api/getAllDemandsByUser');
 };
+exports.updateDemand = (vue, data) => {
+  return postRequest(vue, '/api/updateDemand', data);
+};
+exports.checkDemand = (vue, data) => {
+  return postRequest(vue, '/api/checkDemand', data);
+};
+exports.confirmFinish = (vue, data) => {
+  return postRequest(vue, '/api/confirmFinish', data);
+};
 
 exports.uploadAvatar = (vue, file, userId) => {
   const formData = new FormData();
@@ -184,3 +200,7 @@ exports.addCategory = (vue, data) => {
 exports.categoryList = vue => {
   return getRequest(vue, '/api/categoryList');
 };
+
+// exports.addOrder = (vue, data) => {
+//   return postRequest(vue, '/api/addOrder', data);
+// };
