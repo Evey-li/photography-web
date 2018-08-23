@@ -57,12 +57,12 @@
 
         <div class="time-limit">
           <label for="timeLimit">
-            <i class="icon-asterisk"></i> 周转时间：</label><input type="text" name="timeLimit" v-model="demandData.workTime">
+            <i class="icon-asterisk"></i> 周转时间：</label><input type="text" name="timeLimit" v-model="demandData.workTime" placeholder="3">
           <span>(天)</span>
         </div>
         <div class="reward">
           <label for="reward">
-            <i class="icon-asterisk"></i> 奖金报酬：</label><input type="text" name="reward" v-model="demandData.payment">
+            <i class="icon-asterisk"></i> 奖金报酬：</label><input type="text" name="reward" v-model="demandData.payment" placeholder="1000">
           <span>(￥)</span>
         </div>
         <div class="address">
@@ -133,7 +133,7 @@ export default {
         title:'',
         demanderId:'',
         demandDesc:'',
-        workTime:3,
+        workTime:'',
         payment:'',
         email:'',
         tel: '',

@@ -12,24 +12,27 @@ module.exports = app => {
       if (!condition || condition === 'all') {
         demands = await this.ctx.model.Demand.aggregate([{
           $lookup: {
-            from: 'photos',
-            localField: '_id',
-            foreignField: 'demandId',
-            as: 'photo'
+            from: 'users',
+            localField: 'demanderId',
+            foreignField: '_id',
+            as: 'user'
           }
-        }, {
+        },
+
+        {
           $match: {
             status: '未完成',
             creatorId: null
           }
-        }]).skip((currentPage - 1) * pageSize).limit(pageSize);
+        }
+        ]).skip((currentPage - 1) * pageSize).limit(pageSize);
       } else if (condition === 'recent') {
         demands = await this.ctx.model.Demand.aggregate([{
           $lookup: {
-            from: 'photos',
-            localField: '_id',
-            foreignField: 'demandId',
-            as: 'photo'
+            from: 'users',
+            localField: 'demanderId',
+            foreignField: '_id',
+            as: 'user'
           }
         },
         {
@@ -39,17 +42,17 @@ module.exports = app => {
           }
         }, {
           $sort: {
-            releaseTime: -1
+            _id: -1
           }
         }
         ]).skip((currentPage - 1) * pageSize).limit(pageSize);
       } else if (condition === 'payment') {
         demands = await this.ctx.model.Demand.aggregate([{
           $lookup: {
-            from: 'photos',
-            localField: '_id',
-            foreignField: 'demandId',
-            as: 'photo'
+            from: 'users',
+            localField: 'demanderId',
+            foreignField: '_id',
+            as: 'user'
           }
         },
         {
@@ -67,10 +70,10 @@ module.exports = app => {
       } else if (condition === 'workTime') {
         demands = await this.ctx.model.Demand.aggregate([{
           $lookup: {
-            from: 'photos',
-            localField: '_id',
-            foreignField: 'demandId',
-            as: 'photo'
+            from: 'users',
+            localField: 'demanderId',
+            foreignField: '_id',
+            as: 'user'
           }
         },
         {

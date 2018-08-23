@@ -63,12 +63,12 @@
           </div>
         </div>
         <hr>
-        <h4>已有作品展示</h4>
-        <div class="result-show">
-          <div class="show-img" :key="item.id" v-for="item in reqImgs" :style="backgroundImgStyle(item.url)">
-          </div>
-        </div>
-        <hr>
+        <!-- <h4>已有作品展示</h4>
+          <div class="result-show">
+            <div class="show-img" :key="item.id" v-for="item in reqImgs" :style="backgroundImgStyle(item.url)">
+            </div>
+          </div> -->
+        <!-- <hr> -->
         <div class="received" v-if="received">
           <router-link to="/demandMgmt">
             查看其它已接需求

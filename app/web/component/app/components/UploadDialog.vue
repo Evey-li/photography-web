@@ -96,9 +96,10 @@ export default {
 
       uploadFile(this,el.target.files[0]).then(result => {
           this.photo.imgUrl = result.url;
+          // console.log(result.url);
+          // console.log("********************");
       });
       el.target.value = ''
-
     },
     addPhoto(){
      

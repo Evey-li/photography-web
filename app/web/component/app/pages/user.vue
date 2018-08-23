@@ -148,8 +148,8 @@ export default {
   methods: {
     getPhotosByCreatorId(id){
       getPhotosByCreatorId(this,{userId:id}).then(result => {
-        console.log("*********************");
-        console.log(result);
+        // console.log("*********************");
+        // console.log(result);
         this.items = result;
       })
     },

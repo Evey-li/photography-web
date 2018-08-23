@@ -12,27 +12,32 @@
     </div>
     <div class="show-requests">
       <div class="request" :key="index" v-for="(item,index) in demands" :style="backgroundImgStyle(item.image)">
-        <router-link :to="{name:'detail',params: {id:item._id}}">
-          <div class="other"></div>
-          <div class="bottom">
+        <router-link :to="{name:'detail',params: {id:item._id}}" class="link">
+          <div class="other">
+            <div class="demander">
+              <div class="img" :style="backgroundImgStyle(item.user[0].headImgUrl)"></div>
+              <p>{{item.user[0].userName}}</p>
+            </div>
+          </div>
+          <div class="bottom ">
             <h4>{{item.title}}</h4>
-            <div class="req-info">
-              <div class="time-info">
-                <i class="icon-time"></i>
-                <span class="time">{{item.workTime}}</span>
+            <div class="req-info ">
+              <div class="time-info ">
+                <i class="icon-time "></i>
+                <span class="time ">{{item.workTime}}</span>
                 <span>days</span>
               </div>
-              <div class="payment-info">
+              <div class="payment-info ">
                 <span>￥</span>
-                <span class="payment">{{item.payment}}</span>
+                <span class="payment ">{{item.payment}}</span>
               </div>
             </div>
           </div>
         </router-link>
       </div>
     </div>
-    <div class="market-pagination">
-      <pagination :count="totalPages" @onItemClick="onPageItemClick"></pagination>
+    <div class="market-pagination ">
+      <pagination :count="totalPages " @onItemClick="onPageItemClick "></pagination>
     </div>
   </div>
 </template>
@@ -139,35 +144,59 @@ export default {
   display: flex;
   flex-wrap: wrap;
   justify-content: center;
+  margin: 40px 0;
   .request {
+    color: #444;
     position: relative;
     z-index: 100;
     width: 25%;
     height: 300px;
-    margin: 20px 10px;
-    background-color: #71726e;
+    margin: 0px 15px;
+    background-color: #f7f7f7;
     background-size: cover;
     background-position: center center;
     background-repeat: no-repeat;
+
+    .link {
+      &:hover {
+        color: #444;
+      }
+    }
     .other {
       position: absolute;
       top: 0;
       left: 0;
       right: 0;
       bottom: 100px;
+      .demander {
+        width: 100%;
+        display: inline-block;
+        text-align: center;
+        margin-top: 35px;
+      }
+      .img {
+        display: inline-block;
+        width: 110px;
+        height: 110px;
+        border-radius: 50%;
+        background-image: url('../assets/img/test.jpeg');
+        background-size: cover;
+      }
     }
     .bottom {
-      color: #fff;
+      // color: #444;
       width: 100%;
       height: 100px;
       position: absolute;
       bottom: 0;
       left: 0;
       padding: 10px;
+      text-align: center;
       h4 {
-        border-bottom: 1px solid #fff;
+        border-bottom: 1px solid #444;
         padding-bottom: 10px;
-        font-family: '仿宋';
+        font-family: '宋体';
+        color: #444;
       }
     }
     .req-info {
