@@ -48,6 +48,7 @@ module.exports = app => {
   app.get('/admin/groupByCategory', app.jwt, app.controller.photo.groupByCategory);
   app.get('/admin/getInforCardData', app.jwt, app.controller.admin.getInforCardData);
   app.get('/admin/getDemandBySeason', app.jwt, app.controller.admin.getDemandBySeason);
+  app.get('/admin/getCategory', app.controller.admin.getCategory);
   app.get('/admin/getAdmin', app.jwt, app.controller.admin.getAdmin);
   app.get('/admin/getTableUser', app.jwt, app.controller.user.list);
   app.get('/admin/getTableDemand', app.jwt, app.controller.demand.list);

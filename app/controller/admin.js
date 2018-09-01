@@ -114,5 +114,30 @@ class AdminController extends Controller {
     }
     this.ctx.body = result;
   }
+  async getCategory() {
+    let result = '';
+    const categoryData = [];
+    const categories = await this.service.category.getCategoryList();
+    if (!categories) {
+      result = new Response(Response.NULL_RESULT, null, '类别数据为空！');
+    } else {
+      for (let i = 0; i < categories.length; i++) {
+        const photos = await this.ctx.service.photo.getPhotoByCategoryId(categories[i]._id);
+        const imgUrl = [];
+        for (let j = 0; j < photos.length; j++) {
+          // 判断图片地址是网址类型，还是在public文件夹
+          const isHttp = photos[j].imgUrl && photos[j].imgUrl.indexOf('http') !== -1;
+          let img = photos[j].imgUrl;
+          if (!isHttp) {
+            img = `http://127.0.0.1:7001${img}`;
+          }
+          imgUrl.push(img);
+        }
+        categoryData.push({ id: categories[i]._id, name: categories[i].name, photos: imgUrl });
+      }
+      result = new Response(Response.SUCCESS, categoryData, null);
+    }
+    this.ctx.body = result;
+  }
 }
 module.exports = AdminController;

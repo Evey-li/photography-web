@@ -8,12 +8,10 @@ module.exports = app => {
       });
       return photo;
     }
-
     async save(photo) {
       const newPhoto = new this.ctx.model.Photo(photo);
       return await newPhoto.save();
     }
-
     async getPhotosByCreatorId(id) {
       const photo = await this.ctx.model.Photo.find({
         creatorId: id
@@ -22,7 +20,6 @@ module.exports = app => {
       });
       return photo;
     }
-
     async getPhotoByDemandId(id) {
       const photo = await this.ctx.model.Photo.find({
         demandId: id
@@ -31,7 +28,14 @@ module.exports = app => {
       });
       return photo;
     }
-
+    async getPhotoByCategoryId(c_id) {
+      const photos = await this.ctx.model.Photo.find({
+        categoryId: c_id
+      }, {
+        __v: 0
+      });
+      return photos;
+    }
     async removePhotoById(p_id) {
       const photo = await this.ctx.model.Photo.findOne({
         _id: p_id
@@ -42,7 +46,6 @@ module.exports = app => {
         _id: p_id
       });
     }
-
     async update(changedPhoto) {
       const id = changedPhoto._id;
       delete changedPhoto._id;
@@ -190,7 +193,6 @@ module.exports = app => {
       ]).skip((currentPage - 1) * pageSize).limit(pageSize);
       return photos;
     }
-
     async groupByCategory() {
       const result = await this.ctx.model.Photo.aggregate([
         {
