@@ -59,67 +59,85 @@
   </div>
 </template>
 <script>
-import {mapState ,mapMutations} from 'vuex';
-import {addFollow} from 'api';
-import {removeFollow} from 'api';
+import { mapState, mapMutations } from 'vuex';
+import { addFollow } from 'api';
+import { removeFollow } from 'api';
 import { throws } from 'assert';
 /** 弹窗组件*/
 export default {
   props: {
-    currentPhoto:{},
-    totalLikes:0,
-    isFollowed:false,
+    currentPhoto: {},
+    totalLikes: 0,
+    isFollowed: false,
   },
-  computed:{
-    ...mapState(['user','invitee'])
+  computed: {
+    ...mapState(['user', 'invitee'])
   },
-  data(){
-    return{
-    // showFollow:true,
-    notInvited:true
-    }
+  data() {
+    return {
+      // showFollow:true,
+      notInvited: true
+    };
   },
   methods: {
-    ...mapMutations({setInvitee:'SET_INVITEE'}),
-    inviteCreator(photoCreator){
-      if(this.user.userType === 0){
-        this.$toasted.show("只有需求方才能进行邀请哦~")
-      }else{
-         if(photoCreator._id === this.user._id){
-          this.$toasted.show('自己不能邀请自己哦~')
-        }else{
-          this.closeMyself();
-          this.setInvitee(photoCreator);
-          
-          this.notInvited = false;
-          this.$router.push('/creatDemand');
+    ...mapMutations({ setInvitee: 'SET_INVITEE' }),
+    inviteCreator(photoCreator) {
+      console.log(this.user);
+
+      if (!this.user._id) {
+        this.$toasted.show('请先登录您的需求账户');
+      } else {
+        if (this.user.userType === 0) {
+          this.$toasted.show('只有需求方才能进行邀请哦~');
+        } else {
+          if (photoCreator._id === this.user._id) {
+            this.$toasted.show('自己不能邀请自己哦~');
+          } else {
+            this.closeMyself();
+            this.setInvitee(photoCreator);
+
+            this.notInvited = false;
+            this.$router.push('/creatDemand');
+          }
         }
       }
     },
     closeMyself() {
       this.$emit('closeMyself');
     },
-     backgroundImgStyle(image) {
+    backgroundImgStyle(image) {
       return {
         'background-image': `url(${image})`
       };
     },
-   
-    follow(followId){
-      if(followId === this.user._id){
-        this.$toasted.show("自己就不用关注自己咯~")
-      }else{
-        this.isFollowed = true;
-        addFollow(this,{followId:followId,followerId:this.user._id}).then(result => {
-          this.$toasted.show('关注成功！');   
-         });
-      }  
+
+    follow(followId) {
+      if (this.user._id) {
+        if (followId === this.user._id) {
+          this.$toasted.show('自己就不用关注自己咯~');
+        } else {
+          addFollow(this, { followId, followerId: this.user._id }).then(result => {
+            if (result) {
+              this.isFollowed = true;
+              this.$toasted.show('关注成功！');
+            }
+          });
+        }
+      } else {
+        this.$toasted.show('请先登录！');
+      }
     },
-    unfollow(followId){
-       this.isFollowed = false;
-       removeFollow(this,{followId:followId,followerId:this.user._id}).then(result => {
-        this.$toasted.show('已取消关注！');           
-      });
+    unfollow(followId) {
+      if (this.user._id) {
+        removeFollow(this, { followId, followerId: this.user._id }).then(result => {
+          if (result) {
+            this.isFollowed = false;
+            this.$toasted.show('已取消关注！');
+          }
+        });
+      } else {
+        this.$toasted.show('请先登录！');
+      }
     }
   }
 };

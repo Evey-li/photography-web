@@ -51,41 +51,45 @@ import Waterfall from 'vue-waterfall/lib/waterfall';
 import WaterfallSlot from 'vue-waterfall/lib/waterfall-slot';
 import Pagination from '../components/Pagination';
 import MyDialog from '../components/MyDialog';
-import {mapState} from 'vuex';
-import {getPhotoList,getPhotosNum} from 'api';
-import {addLike,removeLike} from 'api';
-import {getRecordsByPId,findFollowRecord} from 'api';
+import { mapState } from 'vuex';
+import { getPhotoList, getPhotosNum } from 'api';
+import { addLike, removeLike } from 'api';
+import { getRecordsByPId, findFollowRecord } from 'api';
 import { log } from 'util';
 
 
 export default {
   data() {
     return {
-      searchKey:'',
+      searchKey: '',
       align: 'center',
       items: [],
-      currentUserLikeRecords:[],
+      currentUserLikeRecords: [],
       isBusy: false,
       inputFocus: false,
       dialogShow: false,
-      currentPhoto:{user:{}},
-      totalLikes:0,
-      isFollowed:true,
-      totalPages:0,
-      pageSize:12
+      currentPhoto: { user: {} },
+      totalLikes: 0,
+      isFollowed: false,
+      totalPages: 0,
+      pageSize: 12
     };
   },
-  computed:{
+  computed: {
     ...mapState(['user']),
   },
-  created(){
-    getPhotosNum(this,{searchKey:''}).then(result => {
-      this.totalPages = Math.ceil(result/this.pageSize);
+  created() {
+    getPhotosNum(this, { searchKey: '' }).then(result => {
+      if (result) {
+        this.totalPages = Math.ceil(result / this.pageSize);
+      }
     });
-    getPhotoList(this,{searchKey:'',pageSize:this.pageSize,currentPage:1}).then(result => {
-      this.items = result;
+    getPhotoList(this, { searchKey: '', pageSize: this.pageSize, currentPage: 1 }).then(result => {
+      if (result) {
+        this.items = result;
+      }
     });
-  }, 
+  },
   components: {
     Waterfall,
     WaterfallSlot,
@@ -93,12 +97,12 @@ export default {
     MyDialog
   },
   methods: {
-    searchPhoto(){
-      if(this.searchKey){
-        getPhotosNum(this,{searchKey:this.searchKey}).then(result => {
-          this.totalPages = Math.ceil(result/this.pageSize);
+    searchPhoto() {
+      if (this.searchKey) {
+        getPhotosNum(this, { searchKey: this.searchKey }).then(result => {
+          this.totalPages = Math.ceil(result / this.pageSize);
         });
-         getPhotoList(this,{searchKey:this.searchKey,pageSize:this.pageSize,currentPage:1}).then(result => {
+        getPhotoList(this, { searchKey: this.searchKey, pageSize: this.pageSize, currentPage: 1 }).then(result => {
           this.items = result;
         });
       }
@@ -109,66 +113,66 @@ export default {
       };
     },
     onPageItemClick(page) {
-       if(!this.searchKey){
-         getPhotoList(this,{searchKey:'',pageSize:this.pageSize,currentPage:page}).then(result => {
+      if (!this.searchKey) {
+        getPhotoList(this, { searchKey: '', pageSize: this.pageSize, currentPage: page }).then(result => {
           this.items = result;
         });
-      }else{
-         getPhotoList(this,{searchKey:this.searchKey,pageSize:this.pageSize,currentPage:page}).then(result => {
+      } else {
+        getPhotoList(this, { searchKey: this.searchKey, pageSize: this.pageSize, currentPage: page }).then(result => {
           this.items = result;
         });
       }
     },
-    addItems: function() {
+    addItems() {
       if (!this.isBusy && this.items.length < 500) {
         this.isBusy = true;
         this.items.push.apply(this.items, ItemFactory.get(50));
       }
     },
-    shuffle: function() {
-      this.items.sort(function() {
+    shuffle() {
+      this.items.sort(function () {
         return Math.random() - 0.5;
       });
     },
-    reflowed: function() {
+    reflowed() {
       this.isBusy = false;
     },
     onLike(index) {
-      if(!this.user._id){
+      if (!this.user._id) {
         this.$router.push('/login');
         this.$toasted.show('您还没登录！登录了再点赞也不晚哦~')
       }
-      
-      let photo =  this.items[index];
+
+      let photo = this.items[index];
       photo.likeStatus = !photo.likeStatus;
-      if(photo.likeStatus === true){
-        addLike(this,{ photoId:photo._id,admirerId:this.user._id}).then(result => {
-          console.log("added!");
+      if (photo.likeStatus === true) {
+        addLike(this, { photoId: photo._id, admirerId: this.user._id }).then(result => {
+          console.log('added!');
         });
       }
-      if(photo.likeStatus === false){
-         removeLike(this,{ photoId:photo._id,admirerId:this.user._id}).then(result => {
-           console.log("removed!");
+      if (photo.likeStatus === false) {
+        removeLike(this, { photoId: photo._id, admirerId: this.user._id }).then(result => {
+          console.log('removed!');
         })
       }
     },
     showDialog(item) {
-      getRecordsByPId(this,{photoId:item._id}).then(result => {
+      getRecordsByPId(this, { photoId: item._id }).then(result => {
         this.totalLikes = result.length;
       });
       this.currentPhoto = item;
 
-      if(this.user._id){
-         findFollowRecord(this,{followId:item.creatorId,followerId:this.user._id})
+      if (this.user._id) {
+        findFollowRecord(this, { followId: item.creatorId, followerId: this.user._id })
           .then(result => {
-          this.isFollowed = result;
-        });
+            this.isFollowed = result;
+          });
       }
       this.dialogShow = !this.dialogShow;
       this.$refs.content.parentNode.parentNode.parentNode.className +=
         'overHid';
     },
-    closeDialog() { 
+    closeDialog() {
       this.dialogShow = false;
       this.$refs.content.parentNode.parentNode.parentNode.className = '';
     }
