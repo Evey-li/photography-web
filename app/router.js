@@ -10,7 +10,6 @@ module.exports = app => {
   app.get('/api/userinfo', app.controller.user.getUserInfo);
   app.post('/api/getUserById', app.controller.user.getUserById);
   app.post('/api/updateUserInfo', app.controller.user.updateUserInfo);
-  app.get('/api/list', app.controller.user.list);
 
   app.post('/api/getPhotosNum', app.controller.photo.getPhotosNum);
   app.post('/api/getPhotoList', app.controller.photo.getPhotoList);
@@ -44,7 +43,16 @@ module.exports = app => {
   app.post('/api/addCategory', app.controller.category.addCategory);
   app.get('/api/categoryList', app.controller.category.categoryList);
 
-  // app.post('/api/addOrder', app.controller.order.addOrder);
+
+  app.post('/admin/login', app.controller.admin.login);
+  app.get('/admin/groupByCategory', app.jwt, app.controller.photo.groupByCategory);
+  app.get('/admin/getInforCardData', app.jwt, app.controller.admin.getInforCardData);
+  app.get('/admin/getDemandBySeason', app.jwt, app.controller.admin.getDemandBySeason);
+  app.get('/admin/getAdmin', app.jwt, app.controller.admin.getAdmin);
+  app.get('/admin/getTableUser', app.jwt, app.controller.user.list);
+  app.get('/admin/getTableDemand', app.jwt, app.controller.demand.list);
+  app.get('/admin/getTablePhoto', app.jwt, app.controller.photo.list);
+  app.all('/admin/logout', app.jwt, app.controller.admin.logout);
 
   app.get('/*', app.controller.app.index);
 };

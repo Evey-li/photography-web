@@ -1,5 +1,6 @@
 const Controller = require('egg').Controller;
 const Response = require('../util/response');
+// import Mock from 'mockjs';
 
 class UserController extends Controller {
   async login() {
@@ -76,7 +77,18 @@ class UserController extends Controller {
   }
 
   async list() {
-    this.ctx.body = await this.ctx.service.user.getUserList();
+    let result = '';
+    const users = await this.ctx.service.user.getUserList();
+    for (let i = 0; i < users.length; i++) {
+      users[i].follows = (await this.ctx.service.follow.getfollows(users[i]._id)).length;
+      users[i].followers = (await this.ctx.service.follow.getfollowers(users[i]._id)).length;
+      console.log('follows ' + users[i].follows);
+      console.log('followers ' + users[i].followers);
+    }
+    console.log(users);
+
+    result = new Response(Response.SUCCESS, users, null);
+    this.ctx.body = result;
   }
 
   async getUserInfo() {

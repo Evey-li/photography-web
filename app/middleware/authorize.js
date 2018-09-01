@@ -1,12 +1,12 @@
+const Response = require('../util/response');
 module.exports = options => {
-  return async function authorize(ctx, next) {
-    // const success = ctx.cookies.get('login', {
-    //   encrypt: true
-    // });
-    // if (!success)
-    //   if (!ctx.user) {
-    //     return ctx.redirect('/login');
-    //   }
-    await next();
+  return async (ctx, next) => {
+    const { username } = ctx.request.body;
+    const existUser = await ctx.service.user.getByUserName(username);
+    if (existUser && existUser.userType === -1) {
+      await next();
+    } else {
+      ctx.body = new Response(Response.NULL_RESULT, null, '该授权管理员不存在');
+    }
   };
 };

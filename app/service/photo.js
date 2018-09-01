@@ -108,6 +108,41 @@ module.exports = app => {
       ]).skip((currentPage - 1) * pageSize).limit(pageSize);
       return photos;
     }
+    async list() {
+      const photos = await this.ctx.model.Photo.aggregate([{
+        $lookup: {
+          from: 'users',
+          localField: 'creatorId',
+          foreignField: '_id',
+          as: 'user'
+        }
+      },
+      {
+        $lookup: {
+          from: 'categories',
+          localField: 'categoryId',
+          foreignField: '_id',
+          as: 'category'
+        }
+      },
+      {
+        $unwind: '$user',
+      },
+      {
+        $unwind: '$category',
+      },
+      {
+        $project: {
+          'user.password': 0,
+          'user.userDesc': 0,
+          'user.country': 0,
+          'user.city': 0,
+          'user.headImgUrl': 0,
+        }
+      }
+      ]);
+      return photos;
+    }
     async getPhotoListByKeyword(keyword, pageSize, currentPage) {
       const photos = await this.ctx.model.Photo.aggregate([{
         $lookup: {
@@ -154,6 +189,19 @@ module.exports = app => {
       }
       ]).skip((currentPage - 1) * pageSize).limit(pageSize);
       return photos;
+    }
+
+    async groupByCategory() {
+      const result = await this.ctx.model.Photo.aggregate([
+        {
+          $group: { _id: '$categoryId', total: { $sum: 1 } }
+        },
+        { $sort: { total: -1 } }
+      ]);
+      return result;
+    }
+    async count() {
+      return await this.ctx.model.Photo.count({});
     }
   }
   return Photo;

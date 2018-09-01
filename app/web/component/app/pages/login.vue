@@ -67,42 +67,41 @@
   </div>
 </template>
 <script>
-import {regist} from 'api';
-import {mapMutations} from 'vuex';
+import { regist } from 'api';
+import { mapMutations } from 'vuex';
 import { throws } from 'assert';
 
 export default {
   data() {
     return {
-      registData:{
-        userName:'',
-        password:'',
-        confirmPassword:'',
-        userType:0
+      registData: {
+        userName: '',
+        password: '',
+        confirmPassword: '',
+        userType: 0
       },
       isShow: true,
       selected: true,
     };
   },
-  created(){
+  created() {
     this.setGetUserInfo(false);
   },
   methods: {
-    ...mapMutations({setGetUserInfo:'SET_GETUSERINFO'}),
-    login(){
+    ...mapMutations({ setGetUserInfo: 'SET_GETUSERINFO' }),
+    login() {
       this.setGetUserInfo(true);
     },
-    postRegistData(){
-      if(this.registData.password === this.registData.confirmPassword){
-         regist(this,this.registData)
-         .then((result)=>{
-          //  console.log(result);
-          this.$toasted.show('注册成功！可以登录啦!')
-          this.isShow = !this.isShow;
-         });
-      }
-      else{
-        this.$toasted.show('两次输入密码不一致')
+    postRegistData() {
+      if (this.registData.password === this.registData.confirmPassword) {
+        regist(this, this.registData)
+          .then((result) => {
+            //  console.log(result);
+            this.$toasted.show('注册成功！可以登录啦!');
+            this.isShow = !this.isShow;
+          });
+      } else {
+        this.$toasted.show('两次输入密码不一致');
       }
     },
     toRegister() {
@@ -113,7 +112,7 @@ export default {
     },
     asCreator() {
       this.selected = !this.selected;
-      if (this.registData.userType == 1) {
+      if (this.registData.userType === 1) {
         this.registData.userType = 0;
       } else {
         this.registData.userType = 1;
@@ -122,7 +121,7 @@ export default {
     },
     asDemander() {
       this.selected = !this.selected;
-      if (this.registData.userType == 0) {
+      if (this.registData.userType === 0) {
         this.registData.userType = 1;
       } else {
         this.registData.userType = 0;

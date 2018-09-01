@@ -10,6 +10,12 @@ module.exports = app => {
       });
       return category;
     }
+    async getCategoryById(c_id) {
+      const category = await this.ctx.model.Category.findOne({
+        _id: c_id
+      });
+      return category;
+    }
     async removeCategoryById(c_id) {
       const category = await this.ctx.model.Category.findOne({
         _id: c_id

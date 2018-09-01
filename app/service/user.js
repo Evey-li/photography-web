@@ -23,7 +23,14 @@ module.exports = app => {
     }
 
     async getUserList() {
-      return await this.ctx.model.User.find({});
+      return await this.ctx.model.User.aggregate([
+        {
+          $project: {
+            password: 0,
+            __v: 0
+          }
+        }
+      ]);
     }
 
     async update(changedUser) {
@@ -34,6 +41,10 @@ module.exports = app => {
       }, {
         $set: changedUser
       });
+    }
+
+    async count() {
+      return await this.ctx.model.User.count({});
     }
   }
   return User;

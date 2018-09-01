@@ -37,6 +37,7 @@
         <a href="#">常见问题</a>
         <a href="#">意见反馈</a>
         <a href="#">友情链接</a>
+        <a href="http://localhost:8080/login">进入后台</a>
       </div>
       <div class="foot2">© 2018 by Evey</div>
     </div>

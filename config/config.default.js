@@ -36,6 +36,14 @@ module.exports = app => {
     csrf: {
       enable: false,
     },
+    domainWhiteList: [
+      'http://localhost:8080'
+    ]
+  };
+
+  exports.cors = {
+    origin: '*',
+    allowMethods: 'GET,HEAD,PUT,POST,DELETE,PATCH'
   };
 
   exports.middleware = [
@@ -52,13 +60,16 @@ module.exports = app => {
     // passwordField: 'password',
   };
 
-  exports.middleware = [
-    'authorize'
-  ];
-
 
   exports.multipart = {
     fileExtensions: [],
+  };
+
+  exports.jwt = {
+    secret: '123456',
+    getToken(ctx) {
+      return ctx.get('authorization');
+    }
   };
 
   return exports;

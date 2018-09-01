@@ -129,5 +129,13 @@ class DemandController extends Controller {
     const res = await this.ctx.service.demand.update(demand);
     this.ctx.body = new Response(Response.SUCCESS, res, null);
   }
+  async list() {
+    let result = '';
+    // const userData = [];
+    const demands = await this.ctx.service.demand.list();
+
+    result = new Response(Response.SUCCESS, demands, null);
+    this.ctx.body = result;
+  }
 }
 module.exports = DemandController;

@@ -201,6 +201,7 @@ exports.categoryList = vue => {
   return getRequest(vue, '/api/categoryList');
 };
 
+
 // exports.addOrder = (vue, data) => {
 //   return postRequest(vue, '/api/addOrder', data);
 // };

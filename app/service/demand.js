@@ -141,6 +141,11 @@ module.exports = app => {
         $set: demand
       });
     }
+    async list() {
+      return await this.ctx.model.Demand.find({}, {
+        __v: 0
+      });
+    }
   }
   return Demand;
 };

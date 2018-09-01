@@ -31,11 +31,19 @@ class PhotoController extends Controller {
       demandId,
       creatorId
     } = this.ctx.request.body;
-    if (this.ctx.helper.checkNullOrUndefined(photoList, categoryId, demandId, creatorId)) {
+    if (
+      this.ctx.helper.checkNullOrUndefined(
+        photoList,
+        categoryId,
+        demandId,
+        creatorId
+      )
+    ) {
       result = new Response(Response.PARAM_ERROR, null, '参数有误');
     } else {
       let count = 0;
-      const photoDesc = (await this.ctx.service.demand.getDemandById(demandId)).title;
+      const photoDesc = (await this.ctx.service.demand.getDemandById(demandId))
+        .title;
       for (let i = 0; i < photoList.length; i++) {
         const res = await this.ctx.service.photo.save({
           width: photoList[i].width,
@@ -66,9 +74,7 @@ class PhotoController extends Controller {
   }
   async getPhotosNum() {
     let result = '';
-    const {
-      searchKey
-    } = this.ctx.request.body;
+    const { searchKey } = this.ctx.request.body;
     const photoNum = await this.ctx.service.photo.getPhotosNum(searchKey);
     result = new Response(Response.SUCCESS, photoNum, null);
     this.ctx.body = result;
@@ -76,16 +82,19 @@ class PhotoController extends Controller {
   async getPhotoList() {
     let result = '';
     let photoList = '';
-    const {
-      pageSize,
-      currentPage,
-      searchKey
-    } = this.ctx.request.body;
+    const { pageSize, currentPage, searchKey } = this.ctx.request.body;
 
     if (!searchKey) {
-      photoList = await this.ctx.service.photo.getPhotoList(pageSize, currentPage);
+      photoList = await this.ctx.service.photo.getPhotoList(
+        pageSize,
+        currentPage
+      );
     } else {
-      const searchList = await this.ctx.service.photo.getPhotoListByKeyword(searchKey, pageSize, currentPage);
+      const searchList = await this.ctx.service.photo.getPhotoListByKeyword(
+        searchKey,
+        pageSize,
+        currentPage
+      );
       if (!searchList) {
         photoList = await this.ctx.service.photo.getPhotoList();
       } else {
@@ -103,12 +112,17 @@ class PhotoController extends Controller {
         result = new Response(Response.SERVER_ERROR, null, '服务器错误');
       }
     } else {
-      const userLikeRecords = await this.ctx.service.like.getRecordsByUserId(this.ctx.user._id);
+      const userLikeRecords = await this.ctx.service.like.getRecordsByUserId(
+        this.ctx.user._id
+      );
       if (photoList) {
         for (let i = 0; i < photoList.length; i++) {
           photoList[i].likeStatus = false;
           for (let j = 0; j < userLikeRecords.length; j++) {
-            if (userLikeRecords[j].photoId.toString() === photoList[i]._id.toString()) {
+            if (
+              userLikeRecords[j].photoId.toString() ===
+              photoList[i]._id.toString()
+            ) {
               photoList[i].likeStatus = true;
             }
           }
@@ -120,7 +134,6 @@ class PhotoController extends Controller {
     }
     this.ctx.body = result;
   }
-
   async updatePhotoInfo() {
     let result = '';
     let changedPhoto = this.ctx.request.body;
@@ -134,6 +147,33 @@ class PhotoController extends Controller {
   }
   async removePhotoById(pid) {
     this.ctx.body = await this.ctx.service.photo.removeCategoryById(pid);
+  }
+
+  async list() {
+    let result = '';
+    const photos = await this.ctx.service.photo.list();
+    for (let i = 0; i < photos.length; i++) {
+      const res = await this.ctx.service.like.getRecordsByPhotoId(
+        photos[i]._id
+      );
+      photos[i].likes = res.length;
+    }
+    result = new Response(Response.SUCCESS, photos, null);
+    this.ctx.body = result;
+  }
+
+  async groupByCategory() {
+    let result = '';
+    const res = await this.ctx.service.photo.groupByCategory();
+    if (res) {
+      const data = [];
+      for (let i = 0; i < 5; i++) {
+        const cName = (await this.ctx.service.category.getCategoryById(res[i]._id)).name;
+        data.push({ value: res[i].total, name: cName });
+      }
+      result = new Response(Response.SUCCESS, data, null);
+    }
+    this.ctx.body = result;
   }
 }
 module.exports = PhotoController;
