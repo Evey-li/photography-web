@@ -40,7 +40,7 @@ module.exports = app => {
   app.post('/api/avatarUpload', app.controller.file.uploadAvatar);
   app.post('/api/uploadFile', app.controller.file.uploadFile);
 
-  app.post('/api/addCategory', app.controller.category.addCategory);
+  // app.post('/api/addCategory', app.controller.category.addCategory);
   app.get('/api/categoryList', app.controller.category.categoryList);
 
 
@@ -48,7 +48,9 @@ module.exports = app => {
   app.get('/admin/groupByCategory', app.jwt, app.controller.photo.groupByCategory);
   app.get('/admin/getInforCardData', app.jwt, app.controller.admin.getInforCardData);
   app.get('/admin/getDemandBySeason', app.jwt, app.controller.admin.getDemandBySeason);
-  app.get('/admin/getCategory', app.controller.admin.getCategory);
+  app.get('/admin/getCategory', app.jwt, app.controller.admin.getCategory);
+  app.post('/admin/updateCategoryName', app.jwt, app.controller.admin.updateCategoryName);
+  app.post('/admin/addNewCategory', app.jwt, app.controller.admin.addCategory);
   app.get('/admin/getAdmin', app.jwt, app.controller.admin.getAdmin);
   app.get('/admin/getTableUser', app.jwt, app.controller.user.list);
   app.get('/admin/getTableDemand', app.jwt, app.controller.demand.list);

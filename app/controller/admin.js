@@ -133,9 +133,39 @@ class AdminController extends Controller {
           }
           imgUrl.push(img);
         }
-        categoryData.push({ id: categories[i]._id, name: categories[i].name, photos: imgUrl });
+        categoryData.push({ id: categories[i]._id, name: categories[i].name, photos: imgUrl, modify: false });
       }
       result = new Response(Response.SUCCESS, categoryData, null);
+    }
+    this.ctx.body = result;
+  }
+  async updateCategoryName() {
+    let result = '';
+    const data = this.ctx.request.body;
+    if (!data) {
+      result = new Response(Response.PARAM_ERROR, null, '要修改的信息为空！');
+    } else {
+      const category = {
+        _id: data.id,
+        name: data.newName
+      };
+      await this.ctx.service.category.update(category);
+      result = new Response(Response.SUCCESS, category, null);
+    }
+    this.ctx.body = result;
+  }
+  async addCategory() {
+    const categoryName = this.ctx.request.body.newCategory;
+    console.log(categoryName);
+    console.log('****************');
+    let result = '';
+    if (!categoryName) {
+      result = new Response(Response.PARAM_ERROR, null, '参数有误');
+    } else {
+      const res = await this.ctx.service.category.save({
+        name: categoryName
+      });
+      result = new Response(Response.SUCCESS, res, null);
     }
     this.ctx.body = result;
   }

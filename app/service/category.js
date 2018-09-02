@@ -2,7 +2,16 @@ module.exports = app => {
   class Category extends app.Service {
     async save(category) {
       const newCategory = new this.ctx.model.Category(category);
-      await newCategory.save();
+      return await newCategory.save();
+    }
+    async update(category) {
+      const id = category._id;
+      delete category._id;
+      return await this.ctx.model.Category.update({
+        _id: id
+      }, {
+        $set: category
+      });
     }
     async getCategoryByName(c_name) {
       const category = await this.ctx.model.Category.findOne({
