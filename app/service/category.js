@@ -36,7 +36,7 @@ module.exports = app => {
       });
     }
     async getCategoryList() {
-      return await this.ctx.model.Category.find({});
+      return await this.ctx.model.Category.find({ deleted: false });
     }
   }
   return Category;

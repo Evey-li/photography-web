@@ -17,7 +17,8 @@ class PhotoController extends Controller {
         imgUrl: photo.imgUrl,
         photoDesc: photo.photoDesc,
         categoryId: photo.categoryId,
-        uploadTime: moment().format('LL')
+        uploadTime: moment().format('LL'),
+        deleted: false
       });
       result = new Response(Response.SUCCESS, res, null);
     }
@@ -53,7 +54,8 @@ class PhotoController extends Controller {
           photoDesc,
           categoryId,
           demandId,
-          uploadTime: moment().format('LL')
+          uploadTime: moment().format('LL'),
+          deleted: false
         });
         if (res) count++;
       }

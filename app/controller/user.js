@@ -56,7 +56,8 @@ class UserController extends Controller {
         tel: '',
         headImgUrl: `http://${this.ctx.request.host}/public/head.jpg`,
         followers: 0,
-        follow: 0
+        follow: 0,
+        deleted: false
       });
 
       result = new Response(Response.SUCCESS, res._id && res._id !== undefined, null);
@@ -82,11 +83,8 @@ class UserController extends Controller {
     for (let i = 0; i < users.length; i++) {
       users[i].follows = (await this.ctx.service.follow.getfollows(users[i]._id)).length;
       users[i].followers = (await this.ctx.service.follow.getfollowers(users[i]._id)).length;
-      console.log('follows ' + users[i].follows);
-      console.log('followers ' + users[i].followers);
-    }
-    console.log(users);
 
+    }
     result = new Response(Response.SUCCESS, users, null);
     this.ctx.body = result;
   }

@@ -49,7 +49,7 @@ module.exports = app => {
     async update(changedPhoto) {
       const id = changedPhoto._id;
       delete changedPhoto._id;
-      await this.ctx.model.Photo.update({
+      return await this.ctx.model.Photo.update({
         _id: id
       }, {
         $set: changedPhoto
@@ -107,6 +107,11 @@ module.exports = app => {
       },
       {
         $unwind: '$user'
+      },
+      {
+        $match: {
+          deleted: false
+        }
       }
       ]).skip((currentPage - 1) * pageSize).limit(pageSize);
       return photos;
@@ -118,6 +123,11 @@ module.exports = app => {
           localField: 'creatorId',
           foreignField: '_id',
           as: 'user'
+        }
+      },
+      {
+        $match: {
+          deleted: false
         }
       },
       {

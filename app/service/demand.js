@@ -18,11 +18,11 @@ module.exports = app => {
             as: 'user'
           }
         },
-
         {
           $match: {
             status: '未完成',
-            creatorId: null
+            creatorId: null,
+            deleted: false
           }
         }
         ]).skip((currentPage - 1) * pageSize).limit(pageSize);
@@ -38,7 +38,9 @@ module.exports = app => {
         {
           $match: {
             status: '未完成',
-            creatorId: null
+            creatorId: null,
+            deleted: false
+
           }
         }, {
           $sort: {
@@ -58,7 +60,9 @@ module.exports = app => {
         {
           $match: {
             status: '未完成',
-            creatorId: null
+            creatorId: null,
+            deleted: false
+
           }
         },
         {
@@ -79,7 +83,9 @@ module.exports = app => {
         {
           $match: {
             status: '未完成',
-            creatorId: null
+            creatorId: null,
+            deleted: false
+
           }
         },
         {
@@ -142,7 +148,7 @@ module.exports = app => {
       });
     }
     async list() {
-      return await this.ctx.model.Demand.find({}, {
+      return await this.ctx.model.Demand.find({ deleted: false }, {
         __v: 0
       });
     }

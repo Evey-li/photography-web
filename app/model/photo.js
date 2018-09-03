@@ -12,7 +12,8 @@ module.exports = app => {
     photoDesc: String,
     categoryId: ObjectId,
     uploadTime: String,
-    likes: Number
+    likes: Number,
+    deleted: Boolean
   });
   return mongoose.model('photos', PhotoSchema);
 };

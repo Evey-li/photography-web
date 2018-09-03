@@ -13,7 +13,8 @@ module.exports = app => {
     city: String,
     email: String,
     tel: String,
-    headImgUrl: String
+    headImgUrl: String,
+    deleted: Boolean
   });
 
   return mongoose.model('users', UserSchema);

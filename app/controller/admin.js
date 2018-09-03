@@ -156,15 +156,54 @@ class AdminController extends Controller {
   }
   async addCategory() {
     const categoryName = this.ctx.request.body.newCategory;
-    console.log(categoryName);
-    console.log('****************');
+
     let result = '';
     if (!categoryName) {
       result = new Response(Response.PARAM_ERROR, null, '参数有误');
     } else {
       const res = await this.ctx.service.category.save({
-        name: categoryName
+        name: categoryName,
+        deleted: false
       });
+      result = new Response(Response.SUCCESS, res, null);
+    }
+    this.ctx.body = result;
+  }
+  async removeUserById() {
+    const id = this.ctx.request.body.id;
+    let result = '';
+    if (!id) {
+      result = new Response(Response.PARAM_ERROR, null, '参数有误');
+    } else {
+      const user = await this.ctx.service.user.getUserById(id);
+      user.deleted = true;
+      const res = await this.ctx.service.user.update(user);
+      result = new Response(Response.SUCCESS, res, null);
+    }
+    this.ctx.body = result;
+  }
+  async removeDemandById() {
+    const id = this.ctx.request.body.id;
+    let result = '';
+    if (!id) {
+      result = new Response(Response.PARAM_ERROR, null, '参数有误');
+    } else {
+      const demand = await this.ctx.service.demand.getDemandById(id);
+      demand.deleted = true;
+      const res = await this.ctx.service.demand.update(demand);
+      result = new Response(Response.SUCCESS, res, null);
+    }
+    this.ctx.body = result;
+  }
+  async removePhotoById() {
+    const id = this.ctx.request.body.id;
+    let result = '';
+    if (!id) {
+      result = new Response(Response.PARAM_ERROR, null, '参数有误');
+    } else {
+      const photo = await this.ctx.service.photo.getPhotoById(id);
+      photo.deleted = true;
+      const res = await this.ctx.service.photo.update(photo);
       result = new Response(Response.SUCCESS, res, null);
     }
     this.ctx.body = result;

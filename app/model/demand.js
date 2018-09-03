@@ -18,7 +18,8 @@ module.exports = app => {
     receiveTime: String,
     finishTime: String,
     preference: String,
-    place: String
+    place: String,
+    deleted: Boolean
   });
   return mongoose.model('demands', DemandSchema);
 };

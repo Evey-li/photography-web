@@ -4,7 +4,8 @@ module.exports = app => {
   const ObjectId = Schema.Types.ObjectId;
   const CategorySchema = new mongoose.Schema({
     id: ObjectId,
-    name: String
+    name: String,
+    deleted: Boolean
   });
   return mongoose.model('categories', CategorySchema);
 };

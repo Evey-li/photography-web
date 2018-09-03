@@ -29,6 +29,11 @@ module.exports = app => {
             password: 0,
             __v: 0
           }
+        },
+        {
+          $match: {
+            deleted: false
+          }
         }
       ]);
     }
@@ -36,7 +41,7 @@ module.exports = app => {
     async update(changedUser) {
       const id = changedUser._id;
       delete changedUser._id;
-      await this.ctx.model.User.update({
+      return await this.ctx.model.User.update({
         _id: id
       }, {
         $set: changedUser

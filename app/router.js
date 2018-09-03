@@ -55,6 +55,10 @@ module.exports = app => {
   app.get('/admin/getTableUser', app.jwt, app.controller.user.list);
   app.get('/admin/getTableDemand', app.jwt, app.controller.demand.list);
   app.get('/admin/getTablePhoto', app.jwt, app.controller.photo.list);
+  app.post('/admin/removeUserById', app.jwt, app.controller.admin.removeUserById);
+  app.post('/admin/removeDemandById', app.jwt, app.controller.admin.removeDemandById);
+  app.post('/admin/removePhotoById', app.jwt, app.controller.admin.removePhotoById);
+
   app.all('/admin/logout', app.jwt, app.controller.admin.logout);
 
   app.get('/*', app.controller.app.index);

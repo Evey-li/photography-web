@@ -25,7 +25,8 @@ class DemandController extends Controller {
         releaseTime: moment().format('LL'),
         finishTime: '',
         status: '未完成',
-        place: demand.place
+        place: demand.place,
+        deleted: false
       });
       result = new Response(Response.SUCCESS, res, null);
     }
