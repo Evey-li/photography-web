@@ -55,7 +55,7 @@
         </div>
         <div class="container-bottom">
           <div class="user-descr">
-            <span v-if="currentUser.userDesc == ''">ta还没添加任何描述哦......</span>
+            <span v-if="currentUser.userDesc == ''">还没添加任何描述哦......</span>
             <span v-else>{{currentUser.userDesc}}</span>
           </div>
         </div>
@@ -66,7 +66,7 @@
       <div class="filter">
         <div>
           <span>全部作品 </span>
-          <span class="total-photos">30</span>
+          <span class="total-photos">11</span>
         </div>
         <div>
           <span>成交作品 </span>
@@ -74,7 +74,7 @@
         </div>
         <div>
           <span>赞过作品 </span>
-          <span class="total-photos">21</span>
+          <span class="total-photos">8</span>
         </div>
       </div>
       <div class="tab-photos">
@@ -95,28 +95,28 @@
 import Waterfall from 'vue-waterfall/lib/waterfall';
 import WaterfallSlot from 'vue-waterfall/lib/waterfall-slot';
 import UploadDialog from '../components/UploadDialog';
-import {mapState} from 'vuex';
-import {getUserById} from 'api';
-import {getfollowers,getfollows,findFollowRecord,addFollow,removeFollow} from 'api';
-import {getPhotosByCreatorId} from 'api';
+import { mapState } from 'vuex';
+import { getUserById } from 'api';
+import { getfollowers, getfollows, findFollowRecord, addFollow, removeFollow } from 'api';
+import { getPhotosByCreatorId } from 'api';
 import { Result } from 'range-parser';
 import { toUnicode } from 'punycode';
 import { log } from 'util';
 
 
 export default {
-  created(){
-    this.id = this.$route.params.id;  
-    if(this.id){
+  created() {
+    this.id = this.$route.params.id;
+    if (this.id) {
       this.handleCurrentUser(this.id);
       this.findFollowRecord(this.id);
       this.getPhotosByCreatorId(this.id);
     }
   },
-  watch:{
-    $route(to,from){
-      const tmp = to.path.split("/")
-      if(tmp[1] === 'user' && tmp[2]){
+  watch: {
+    $route(to, from) {
+      const tmp = to.path.split('/');
+      if (tmp[1] === 'user' && tmp[2]) {
         this.handleCurrentUser(tmp[2]);
         this.findFollowRecord(tmp[2]);
         this.getPhotosByCreatorId(tmp[2]);
@@ -131,55 +131,55 @@ export default {
   data() {
     return {
       dialogShow: false,
-      emailShow:false,
+      emailShow: false,
       isBusy: false,
-      isOwner:true,
+      isOwner: true,
       align: 'center',
-      items:[],
-      currentUser:{},
-      fansNum:0,
-      followsNum:0,
-      isFollowed:true
+      items: [],
+      currentUser: {},
+      fansNum: 0,
+      followsNum: 0,
+      isFollowed: true
     };
   },
-  computed:{
+  computed: {
     ...mapState(['user']),
   },
   methods: {
-    getPhotosByCreatorId(id){
-      getPhotosByCreatorId(this,{userId:id}).then(result => {
+    getPhotosByCreatorId(id) {
+      getPhotosByCreatorId(this, { userId: id }).then(result => {
         // console.log("*********************");
         // console.log(result);
         this.items = result;
-      })
-    },
-    findFollowRecord(currentId){
-      findFollowRecord(this,{followId:currentId,followerId:this.user._id})
-      .then(result => {
-        this.isFollowed = result;
       });
     },
-    handleCurrentUser(currentId){
-      let uId = '';
-      if(currentId !== this.user._id){  
-        getUserById(this,{id:currentId})
-         .then((result) => {
-           this.currentUser = result;
+    findFollowRecord(currentId) {
+      findFollowRecord(this, { followId: currentId, followerId: this.user._id })
+        .then(result => {
+          this.isFollowed = result;
         });
+    },
+    handleCurrentUser(currentId) {
+      let uId = '';
+      if (currentId !== this.user._id) {
+        getUserById(this, { id: currentId })
+          .then((result) => {
+            this.currentUser = result;
+          });
         this.isOwner = false;
         uId = currentId;
-        
-      }else{
+
+      } else {
         this.currentUser = this.user;
         this.isOwner = true;
         uId = this.user._id;
       }
-      getfollowers(this,{userId:uId})
-         .then(result => { 
+      getfollowers(this, { userId: uId })
+        .then(result => {
           this.fansNum = result.length;
         });
-        getfollows(this,{userId:uId})
-         .then(result =>{
+      getfollows(this, { userId: uId })
+        .then(result => {
           this.followsNum = result.length;
         });
     },
@@ -217,14 +217,14 @@ export default {
       }else{
         this.isFollowed = true;
         addFollow(this,{followId:followId,followerId:this.user._id}).then(result => {
-          this.$toasted.show('关注成功！');   
+          this.$toasted.show('关注成功！');
          });
-      }  
+      }
     },
     unfollow(followId){
        this.isFollowed = false;
        removeFollow(this,{followId:followId,followerId:this.user._id}).then(result => {
-        this.$toasted.show('已取消关注！');           
+        this.$toasted.show('已取消关注！');
       });
     }
   }

@@ -3,123 +3,187 @@
     <div class="main">
       <div class="mgmt-filter">
         <div></div>
-        <div class="all-demand" @click="getAllDemand" :class="{newBorder:currentIndex===0}">全部需求</div>
+        <div class="all-demand" @click="getOrders" :class="{newBorder:currentIndex===0}">全部需求</div>
         <div></div>
         <div class="unfinished-demand" @click="getUnfinished" :class="{newBorder:currentIndex===1}">未完成需求</div>
         <div></div>
         <div class="finished-demand" @click="getFinished" :class="{newBorder:currentIndex===2}">已完成需求</div>
         <div></div>
       </div>
-      <div class="table-data" v-if="demands.length">
-        <table class="table">
+      <div class="table-data" v-if="user.userType === 0">
+        <div v-if="!ordersOfCreator.length" class="no-data">
+          <img src="http://localhost:7001/public/test.gif" alt="">
+          <p>暂无符合要求的数据</p>
+        </div>
+        <table class="table" v-else>
           <thead>
             <th>需求名称</th>
             <th>需求人</th>
+            <th>需求人邮箱</th>
             <th>奖励报酬</th>
             <th>当前状态</th>
-            <th>创作人</th>
             <th>接单日期</th>
             <th>完成日期</th>
+            <th>邀请单</th>
+            <th></th>
+          </thead>
+
+          <tbody>
+            <tr v-for="(item,index) in ordersOfCreator" :key="index">
+              <td>
+                <router-link :to="{name:'detail',params: {id:item.demandId}}" class="link">{{item.title}}</router-link>
+              </td>
+              <td>{{item.demander}}</td>
+              <td>{{item.email}}</td>
+              <td>{{item.payment}}</td>
+              <td>{{item.status}}</td>
+              <td>{{item.receiveDate}}</td>
+              <td v-if="!item.finishDate">暂无</td>
+              <td v-else>{{item.finishDate}}</td>
+              <td v-if="item.invited">是</td>
+              <td v-else>否</td>
+              <td>等待中</td>
+            </tr>
+          </tbody>
+
+        </table>
+      </div>
+      <div class="table-data" v-else>
+        <div v-if="!ordersOfDemander.length" class="no-data">
+          <img src="http://localhost:7001/public/test.gif" alt="">
+          <p>暂无符合要求的数据</p>
+        </div>
+        <table class="table" v-else>
+          <thead>
+            <th>需求名称</th>
+            <th>当前状态</th>
+            <th>接单日期</th>
+            <th>创作人</th>
+            <th>完成日期</th>
+            <th>邀请单</th>
             <th></th>
           </thead>
           <tbody>
-            <tr v-for="demand in demands" :key="demand._id">
+            <tr v-for="(item,index) in ordersOfDemander" :key="index">
               <td>
-                <router-link :to="{name:'detail',params: {id:demand._id}}" class="viewDetail">
-                  {{demand.title}}
-                </router-link>
+                <router-link :to="{name:'detail',params: {id:item.demandId}}" class="link">{{item.title}}</router-link>
               </td>
-              <td>{{demand.demanderName}}</td>
-              <td>￥{{demand.payment}}</td>
-              <td>{{demand.status}}</td>
-              <td v-if="demand.creatorName">{{demand.creatorName}}</td>
+              <td>{{item.status}}</td>
+              <td v-if="item.receiveDate">{{item.receiveDate}}</td>
               <td v-else>暂无</td>
-              <td v-if="demand.receiveTime">{{demand.receiveTime}}</td>
+              <td v-if="item.creatorId">
+                <router-link :to="{name:'user',params: {id:item.creatorId}}" class="link">{{item.creatorName}}</router-link>
+              </td>
               <td v-else>暂无</td>
-              <td v-if="demand.finishTime">{{demand.finishTime}}</td>
+              <td v-if="item.finishDate">{{item.finishDate}}</td>
               <td v-else>暂无</td>
-              <td v-if="user.userType===0">
-                <div v-if="demand.status==='未完成'">
-                  <span class="confirmFinish" @click="confirmFinish(demand._id)">确认完成</span>
-                </div>
-                <div v-else>
-                  <router-link :to="{name:'uploadPhoto',params: {id:demand._id}}" class="finished" v-show="!demand.hasPhotos">上传分享</router-link>
-                  <span v-show="demand.hasPhotos">已分享</span>
-                </div>
+              <td v-if="item.invited">是</td>
+              <td v-else>否</td>
+              <td v-if="item.status === '已完成'">
+                <div class="inopera">已完成</div>
+              </td>
+              <td v-else>
+                <div v-if="item.status === '待接单'" class="inopera">请等待</div>
+                <div v-else-if="item.status === '待回复'" class="opera" @click="reply(item.orderId)">确认挑选</div>
+                <div v-else-if="item.status === '订单关闭'" class="inopera">订单关闭</div>
+                <div v-else class="inopera">创作中</div>
               </td>
             </tr>
           </tbody>
         </table>
-
-      </div>
-      <div v-else class="no-data">
-        <img src="http://localhost:7001/public/test.gif" alt="">
-        <p>暂无符合要求的数据</p>
       </div>
     </div>
   </div>
 </template>
 
 <script>
-import {getAllDemandsByUser,confirmFinish} from 'api';
-import {mapState} from 'vuex';
+import { getOrdersByCreator, getDemandsOfDemander, confirmCreator } from 'api';
+import { mapState } from 'vuex';
+import { log } from 'util';
 
 export default {
-  created(){
-    getAllDemandsByUser(this).then(result => {
-       this.demands = result;
-    });
+  created() {
+    this.getOrders();
   },
-   computed:{
+  computed: {
     ...mapState(['user'])
   },
   data() {
     return {
       currentIndex: 0,
-      demands:[]
+      ordersOfCreator: [],
+      ordersOfDemander: []
     };
   },
 
   methods: {
-    getAllDemand(){
-       this.currentIndex = 0;
-       getAllDemandsByUser(this).then(result => {
-         this.demands = result;
-       })
-    },
-    getUnfinished(){
-      this.currentIndex = 1;
-      let unfinishedDemands = [];
-       getAllDemandsByUser(this).then(result => {
-         for(let i=0 ;i<result.length; i++){
-           if(result[i].status === "未完成"){
-             unfinishedDemands.push(result[i]);
-           }
-         }
-         this.demands = unfinishedDemands;
-       })
-    },
-    getFinished(){
-      this.currentIndex = 2;
-      let finishedDemands = [];
-       getAllDemandsByUser(this).then(result => {
-         for(let i=0 ;i<result.length; i++){
-           if(result[i].status === "已完成"){
-             finishedDemands.push(result[i]);
-           }
-         }
-         this.demands = finishedDemands;
-       })
-    },
-    confirmFinish(demand_id){
-      if(demand_id){
-        confirmFinish(this,{demandId:demand_id}).then(res => {
-           getAllDemandsByUser(this).then(result => {
-             this.demands = result;
-           });
-          this.$toasted.show("恭喜您完成一单需求，快去分享您此次的作品，吸引更多需求人吧~");
-        })
+    getOrders() {
+      this.currentIndex = 0;
+      if (this.user.userType === 0) {
+        getOrdersByCreator(this).then(result => {
+          // console.log(result);
+          this.ordersOfCreator = result;
+        });
       }
+      if (this.user.userType === 1) {
+        getDemandsOfDemander(this).then(result => {
+          // console.log(result);
+          this.ordersOfDemander = result;
+        });
+      }
+    },
+    getUnfinished() {
+      this.currentIndex = 1;
+      if (this.user.userType === 0) {
+        const unfinished = [];
+        getOrdersByCreator(this).then(result => {
+          for (let i = 0; i < result.length; i++) {
+            if (result[i].status !== '已完成') {
+              unfinished.push(result[i]);
+            }
+          }
+          this.ordersOfCreator = unfinished;
+        });
+      } else {
+        const unfinished = [];
+        getDemandsOfDemander(this).then(result => {
+          for (let i = 0; i < result.length; i++) {
+            if (result[i].status !== '已完成') {
+              unfinished.push(result[i]);
+            }
+          }
+          this.ordersOfDemander = unfinished;
+        });
+      }
+    },
+    getFinished() {
+      this.currentIndex = 2;
+      if (this.user.userType === 0) {
+        const finished = [];
+        getOrdersByCreator(this).then(result => {
+          for (let i = 0; i < result.length; i++) {
+            if (result[i].status === '已完成') {
+              finished.push(result[i]);
+            }
+          }
+          this.ordersOfCreator = finished;
+        });
+      } else {
+        const finished = [];
+        getDemandsOfDemander(this).then(result => {
+          for (let i = 0; i < result.length; i++) {
+            if (result[i].status === '已完成') {
+              finished.push(result[i]);
+            }
+          }
+          this.ordersOfDemander = finished;
+        });
+      }
+    },
+    reply(orderId) {
+      confirmCreator(this, { orderId }).then(result => {
+        console.log(result);
+      });
     }
   }
 };
@@ -157,6 +221,13 @@ export default {
   .table-data {
     margin: 30px 0;
   }
+  .no-data {
+    text-align: center;
+    margin-top: 60px;
+    p {
+      font-size: 20px;
+    }
+  }
   table {
     text-align: center;
     .confirmFinish {
@@ -172,32 +243,38 @@ export default {
         cursor: pointer;
       }
     }
-    .finished {
+    .link {
+      color: #08af7f;
+      &:hover {
+        color: #aaa;
+      }
+    }
+    .inopera {
       display: inline-block;
       width: 90px;
       height: 35px;
       line-height: 35px;
-      color: #08af7f;
-      border: 1px solid #08af7f;
+      color: #aaa;
+      border: 1px solid #aaa;
       border-radius: 5px;
       &:hover {
         cursor: pointer;
         text-decoration: none;
       }
     }
-    .viewDetail {
-      color: #08af7f;
-      font-size: 17px;
+    .opera {
+      display: inline-block;
+      width: 90px;
+      height: 35px;
+      line-height: 35px;
+      color: #fff;
+      background-color: #08af7f;
+      border: 1px solid #08af7f;
+      border-radius: 5px;
       &:hover {
+        cursor: pointer;
         text-decoration: none;
       }
-    }
-  }
-  .no-data {
-    text-align: center;
-    margin-top: 60px;
-    p {
-      font-size: 20px;
     }
   }
 }

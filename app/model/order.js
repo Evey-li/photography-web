@@ -6,8 +6,11 @@ module.exports = app => {
     id: ObjectId,
     demandId: ObjectId,
     creatorId: ObjectId,
-    date: String,
-    success: Boolean,
+    receiveDate: String,
+    finishDate: String,
+    status: String,
+    invited: Boolean,
+    deleted: Boolean,
   });
   return mongoose.model('orders', OrderSchema);
 };

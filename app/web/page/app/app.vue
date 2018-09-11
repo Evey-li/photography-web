@@ -3,7 +3,7 @@
     <div class="app-head">
       <div class="app-head-inner">
 
-        <router-link to="/index"><img src="../../component/app/assets/logo.png" class="logo"></router-link>
+        <router-link to="/index"><img src="../../component/app/assets/logo2.png" class="logo"></router-link>
         <div class="head-nav">
           <ul class="nav-list">
             <router-link tag="li" to="/index">首页</router-link>
@@ -46,33 +46,33 @@
 
 <script>
 import Vue from 'vue';
-import {mapState ,mapMutations} from 'vuex';
-import {logout} from 'api';
+import { mapState, mapMutations } from 'vuex';
+import { logout } from 'api';
 import { Result } from 'range-parser';
-import {getUserInfo} from 'api';
+import { getUserInfo } from 'api';
 
 export default {
-  created(){
-    if(this.getUserInfo){
-      getUserInfo(this).then((user)=>{
-        if(user !== null){
+  created() {
+    if (this.getUserInfo) {
+      getUserInfo(this).then((user) => {
+        if (user !== null) {
           this.setUser(user);
           this.setGetUserInfo(false);
-          localStorage.setItem("user",JSON.stringify(user));
+          localStorage.setItem("user", JSON.stringify(user));
         }
       });
     }
   },
-  computed:{
-    ...mapState(['user','getUserInfo']),
-    userExist(){
+  computed: {
+    ...mapState(['user', 'getUserInfo']),
+    userExist() {
       return this.user._id !== null && this.user._id !== undefined;
     }
   },
-  methods:{
-    ...mapMutations({setUser:'SET_USER',setGetUserInfo:'SET_GETUSERINFO',userLogout:'USER_LOGOUT'}),
-    logout(){
-      logout(this).then((result) =>{
+  methods: {
+    ...mapMutations({ setUser: 'SET_USER', setGetUserInfo: 'SET_GETUSERINFO', userLogout: 'USER_LOGOUT' }),
+    logout() {
+      logout(this).then((result) => {
         console.log(result);
         this.userLogout();
         localStorage.removeItem("user");
@@ -103,7 +103,7 @@ table {
   border-spacing: 0;
 }
 a {
-  color: inherit;
+  color: black;
   text-decoration: none;
   &:hover {
     text-decoration: none;
@@ -133,8 +133,9 @@ body {
   .app-head-inner {
     margin: 0 auto;
     .logo {
-      width: 50px;
-      margin-left: 30px;
+      height: 40px;
+      width: 60px;
+      margin-left: 45px;
     }
   }
 }

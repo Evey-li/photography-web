@@ -43,7 +43,12 @@ module.exports = app => {
   // app.post('/api/addCategory', app.controller.category.addCategory);
   app.get('/api/categoryList', app.controller.category.categoryList);
 
+  app.post('/api/addOrder', app.controller.order.addOrder);
+  app.get('/api/getOrdersByCreator', app.controller.order.getOrdersByCreator);
+  app.get('/api/getDemandsOfDemander', app.controller.order.getDemandsOfDemander);
+  app.post('/api/confirmCreator', app.controller.order.confirmCreator);
 
+  /* 管理员后台接口 */
   app.post('/admin/login', app.controller.admin.login);
   app.get('/admin/groupByCategory', app.jwt, app.controller.photo.groupByCategory);
   app.get('/admin/getInforCardData', app.jwt, app.controller.admin.getInforCardData);

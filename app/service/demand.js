@@ -20,8 +20,7 @@ module.exports = app => {
         },
         {
           $match: {
-            status: '未完成',
-            creatorId: null,
+            finishTime: '',
             deleted: false
           }
         }
@@ -37,10 +36,8 @@ module.exports = app => {
         },
         {
           $match: {
-            status: '未完成',
-            creatorId: null,
+            finishTime: '',
             deleted: false
-
           }
         }, {
           $sort: {
@@ -59,10 +56,8 @@ module.exports = app => {
         },
         {
           $match: {
-            status: '未完成',
-            creatorId: null,
+            finishTime: '',
             deleted: false
-
           }
         },
         {
@@ -116,14 +111,6 @@ module.exports = app => {
         demands = await this.ctx.model.Demand.find({
           creatorId: user._id
         }).lean();
-      }
-      for (let i = 0; i < demands.length; i++) {
-        if (demands[i].demanderId) {
-          demands[i].demanderName = (await this.ctx.service.user.getUserById(demands[i].demanderId)).userName;
-        }
-        if (demands[i].creatorId) {
-          demands[i].creatorName = (await this.ctx.service.user.getUserById(demands[i].creatorId)).userName;
-        }
       }
       return demands;
     }

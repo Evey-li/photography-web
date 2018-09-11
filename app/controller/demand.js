@@ -50,14 +50,16 @@ class DemandController extends Controller {
       currentPage
     } = this.ctx.request.body;
     if (this.ctx.helper.checkNullOrUndefined(condition, pageSize, currentPage)) {
-      this.ctx.body = new Response(Response.PARAM_ERROR, null, '参数错误');
+      this.ctx.body = new Response(Response.PARAM_ERROR, null, '需求列表请求参数错误');
       return;
     } else {
       const demandList = await this.ctx.service.demand.getDemandList(condition, pageSize, currentPage);
+      console.log(demandList);
+
       if (demandList) {
         result = new Response(Response.SUCCESS, demandList, null);
       } else {
-        result = new Response(Response.SERVER_ERROR, null, '服务器错误');
+        result = new Response(Response.SERVER_ERROR, null, '数据库中暂无符合要求的需求');
       }
     }
     this.ctx.body = result;
@@ -80,6 +82,7 @@ class DemandController extends Controller {
     } else {
       const demands = await this.ctx.service.demand.getAllDemandsByUser(this.ctx.user);
       for (let i = 0; i < demands.length; i++) {
+        // 判断该需求对应的作品是否已经上传到数据库的photo表中
         const res = await this.ctx.service.photo.getPhotoByDemandId(demands[i]._id);
         if (res.length === 0) {
           demands[i].hasPhotos = false;

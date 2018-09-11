@@ -202,6 +202,15 @@ exports.categoryList = vue => {
 };
 
 
-// exports.addOrder = (vue, data) => {
-//   return postRequest(vue, '/api/addOrder', data);
-// };
+exports.addOrder = (vue, data) => {
+  return postRequest(vue, '/api/addOrder', data);
+};
+exports.getOrdersByCreator = (vue) => {
+  return getRequest(vue, '/api/getOrdersByCreator');
+};
+exports.getDemandsOfDemander = (vue) => {
+  return getRequest(vue, '/api/getDemandsOfDemander');
+};
+exports.confirmCreator = (vue, data) => {
+  return postRequest(vue, '/api/confirmCreator', data);
+};

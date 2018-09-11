@@ -49,7 +49,7 @@ export default {
   created(){
     this.filter = 'all';
     getDemandList(this,{condition:'all',pageSize:this.pageSize,currentPage:1}).then(result => {
-      this.demands = result;  
+      this.demands = result;
     });
     getDemandsNum(this).then(result => {
       this.totalPages = Math.ceil(result/this.pageSize);
@@ -71,13 +71,13 @@ export default {
       if(condition){
         this.filter = condition
       }
-      getDemandList(this,{condition:condition,pageSize:this.pageSize,currentPage:1}).then(result => {
-        this.demands = result;  
+      getDemandList(this,{ condition:condition,pageSize:this.pageSize,currentPage:1}).then(result => {
+        this.demands = result;
       });
     },
     onPageItemClick(page) {
       getDemandList(this,{condition:this.filter,pageSize:this.pageSize,currentPage:page}).then(result => {
-        this.demands = result;  
+        this.demands = result;
       });
     },
     backgroundImgStyle(image) {

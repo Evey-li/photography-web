@@ -85,39 +85,39 @@
 </template>
 
 <script>
-import {getDemandById,updateDemand,checkDemand} from 'api';
-import {mapState} from 'vuex';
+import { getDemandById, addOrder, checkDemand } from 'api';
+import { mapState } from 'vuex';
 import { log } from 'util';
 
 export default {
-  created(){
+  created() {
     this.id = this.$route.params.id;
-    getDemandById(this,{demandId:this.id}).then(result => {
+    getDemandById(this, { demandId: this.id }).then(result => {
       this.demand = result;
     });
-    checkDemand(this,{demandId:this.id,creatorId:this.user._id}).then(result => {
+    checkDemand(this, { demandId: this.id, creatorId: this.user._id }).then(result => {
       this.received = result;
     });
   },
-  watch:{
-     $route(to,from){
+  watch: {
+    $route(to, from) {
       const tmp = to.path.split("/")
-      if(tmp[1] === 'demandDetail' && tmp[2]){
-         getDemandById(this,{demandId:tmp[2]}).then(result => {
-           this.demand = result;
-         });
-         checkDemand(this,{demandId:tmp[2],creatorId:this.user._id}).then(result => {
-           this.received = result;
-         });
+      if (tmp[1] === 'demandDetail' && tmp[2]) {
+        getDemandById(this, { demandId: tmp[2] }).then(result => {
+          this.demand = result;
+        });
+        checkDemand(this, { demandId: tmp[2], creatorId: this.user._id }).then(result => {
+          this.received = result;
+        });
       }
     }
   },
-  computed:{
+  computed: {
     ...mapState(['user'])
   },
   data() {
     return {
-      demand:{},
+      demand: {},
       reqImgs: [
         {
           id: 1,
@@ -150,7 +150,7 @@ export default {
             'https://images.snapwi.re/1f2a/59bc2f192a3919f2778b4582.w314.h314.jpg'
         }
       ],
-      received:false
+      received: false
     };
   },
   methods: {
@@ -159,10 +159,19 @@ export default {
         'background-image': `url(${image})`
       };
     },
-    receiveDemand(demand_id){
-     updateDemand(this,{demandId:demand_id,creatorId:this.user._id}).then(result => {
-        this.$router.push('/demandMgmt');      
-     });
+    receiveDemand(demand_id) {
+      //  updateDemand(this,{demandId:demand_id,creatorId:this.user._id}).then(result => {
+      //     this.$router.push('/demandMgmt');
+      //  });
+      if (this.user._id) {
+        addOrder(this, { demandId: demand_id, creatorId: this.user._id }).then(result => {
+          this.$toasted.show('您已经接下需求，请等待需求人答复！');
+          this.$router.push('/demandMgmt');
+        });
+      } else {
+        this.$toasted.show('请先登录您的创作人账户，再继续接单！');
+      }
+
     }
   }
 };
