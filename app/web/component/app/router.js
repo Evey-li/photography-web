@@ -58,7 +58,7 @@ const router = new VueRouter({
   },
   {
     path: '/uploadPhotos/:id',
-    name: 'uploadPhoto',
+    name: 'uploadPhotos',
     component: uploadPhotos,
   },
   {

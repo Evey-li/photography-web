@@ -11,6 +11,7 @@ module.exports = app => {
   app.post('/api/getUserById', app.controller.user.getUserById);
   app.post('/api/updateUserInfo', app.controller.user.updateUserInfo);
 
+  app.get('/api/getPhotosForIndex', app.controller.photo.getPhotosForIndex);
   app.post('/api/getPhotosNum', app.controller.photo.getPhotosNum);
   app.post('/api/getPhotoList', app.controller.photo.getPhotoList);
   app.post('/api/updatePhotoInfo', app.controller.photo.updatePhotoInfo);
@@ -34,8 +35,6 @@ module.exports = app => {
   app.post('/api/getDemandById', app.controller.demand.getDemandById);
   app.get('/api/getAllDemandsByUser', app.controller.demand.getAllDemandsByUser);
   app.post('/api/updateDemand', app.controller.demand.updateDemand);
-  app.post('/api/checkDemand', app.controller.demand.checkDemand);
-  app.post('/api/confirmFinish', app.controller.demand.confirmFinish);
 
   app.post('/api/avatarUpload', app.controller.file.uploadAvatar);
   app.post('/api/uploadFile', app.controller.file.uploadFile);
@@ -47,6 +46,11 @@ module.exports = app => {
   app.get('/api/getOrdersByCreator', app.controller.order.getOrdersByCreator);
   app.get('/api/getDemandsOfDemander', app.controller.order.getDemandsOfDemander);
   app.post('/api/confirmCreator', app.controller.order.confirmCreator);
+  app.post('/api/confirmFinish', app.controller.order.confirmFinish);
+  app.post('/api/receiveOrder', app.controller.order.receiveOrder);
+  app.post('/api/refuseOrder', app.controller.order.refuseOrder);
+  app.post('/api/checkOrder', app.controller.order.checkOrder);
+  app.post('/api/getSuccesOrders', app.controller.order.getSuccesOrders);
 
   /* 管理员后台接口 */
   app.post('/admin/login', app.controller.admin.login);

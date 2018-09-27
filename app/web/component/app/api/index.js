@@ -108,7 +108,9 @@ exports.getUserById = (vue, data) => {
   return postRequest(vue, '/api/getUserById', data);
 };
 
-
+exports.getPhotosForIndex = vue => {
+  return getRequest(vue, '/api/getPhotosForIndex');
+};
 exports.getPhotosByCreatorId = (vue, data) => {
   return postRequest(vue, '/api/getPhotosByCreatorId', data);
 };
@@ -156,6 +158,9 @@ exports.getfollowers = (vue, data) => {
 exports.getfollows = (vue, data) => {
   return postRequest(vue, '/api/getfollows', data);
 };
+exports.getSuccesOrders = (vue, data) => {
+  return postRequest(vue, '/api/getSuccesOrders', data);
+};
 
 exports.getDemandsNum = vue => {
   return getRequest(vue, '/api/getDemandsNum');
@@ -175,12 +180,10 @@ exports.getAllDemandsByUser = vue => {
 exports.updateDemand = (vue, data) => {
   return postRequest(vue, '/api/updateDemand', data);
 };
-exports.checkDemand = (vue, data) => {
-  return postRequest(vue, '/api/checkDemand', data);
+exports.checkOrder = (vue, data) => {
+  return postRequest(vue, '/api/checkOrder', data);
 };
-exports.confirmFinish = (vue, data) => {
-  return postRequest(vue, '/api/confirmFinish', data);
-};
+
 
 exports.uploadAvatar = (vue, file, userId) => {
   const formData = new FormData();
@@ -213,4 +216,13 @@ exports.getDemandsOfDemander = (vue) => {
 };
 exports.confirmCreator = (vue, data) => {
   return postRequest(vue, '/api/confirmCreator', data);
+};
+exports.confirmFinish = (vue, data) => {
+  return postRequest(vue, '/api/confirmFinish', data);
+};
+exports.receiveOrder = (vue, data) => {
+  return postRequest(vue, '/api/receiveOrder', data);
+};
+exports.refuseOrder = (vue, data) => {
+  return postRequest(vue, '/api/refuseOrder', data);
 };

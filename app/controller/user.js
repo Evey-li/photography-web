@@ -33,7 +33,7 @@ class UserController extends Controller {
       confirmPassword
     } = this.ctx.request.body;
     if (this.ctx.helper.checkNullOrUndefined(userName, userType, password, confirmPassword)) {
-      this.ctx.body = new Response(Response.PARAM_ERROR, null, '参数错误');
+      this.ctx.body = new Response(Response.PARAM_ERROR, null, '注册新用户所需参数错误');
       return;
     }
     let result = '';
@@ -72,7 +72,7 @@ class UserController extends Controller {
       const user = await this.ctx.service.user.getUserById(userId);
       result = new Response(Response.SUCCESS, user, null);
     } else {
-      result = new Response(Response.PARAM_ERROR, null, '参数错误');
+      result = new Response(Response.PARAM_ERROR, null, '用户ID参数错误');
     }
     this.ctx.body = result;
   }

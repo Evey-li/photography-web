@@ -37,12 +37,28 @@
               <td>{{item.email}}</td>
               <td>{{item.payment}}</td>
               <td>{{item.status}}</td>
-              <td>{{item.receiveDate}}</td>
+              <td v-if="item.receiveDate">{{item.receiveDate}}</td>
+              <td v-else>暂无</td>
               <td v-if="!item.finishDate">暂无</td>
               <td v-else>{{item.finishDate}}</td>
               <td v-if="item.invited">是</td>
               <td v-else>否</td>
-              <td>等待中</td>
+              <td>
+                <div v-if="item.status!=='已完成'">
+                  <div v-if="item.status==='待回复'" class="inopera">等待中</div>
+                  <div v-else-if="item.status==='待接单'">
+                    <div class="opera" @click="receive(item.orderId)">立即接单</div>
+                    <div class="opera_red" @click="refuse(item.orderId)">拒绝接单</div>
+                  </div>
+                  <div v-else-if="item.status==='创作中'" class="opera" @click="confirmFinish(item.orderId)">确认完成</div>
+                  <div v-else-if="item.status==='订单关闭'" class="inopera">接单失败</div>
+                </div>
+                <div v-else>
+                  <router-link tag="div" :to="{name:'uploadPhotos',params: {id:item.demandId}}" class="opera" v-if="!item.hasPhoto">分享作品</router-link>
+                  <!-- <div v-if="!item.hasPhoto" class="opera">分享作品</div> -->
+                  <div v-else class="inoper">分享成功</div>
+                </div>
+              </td>
             </tr>
           </tbody>
 
@@ -97,7 +113,8 @@
 </template>
 
 <script>
-import { getOrdersByCreator, getDemandsOfDemander, confirmCreator } from 'api';
+import { getOrdersByCreator, getDemandsOfDemander } from 'api';
+import { confirmCreator, confirmFinish, receiveOrder, refuseOrder } from 'api';
 import { mapState } from 'vuex';
 import { log } from 'util';
 
@@ -180,16 +197,65 @@ export default {
         });
       }
     },
+    receive(orderId) {
+      receiveOrder(this, { orderId }).then(result => {
+        // console.log(result);
+        this.$toasted.show('您已接下需求，快去拍摄作品吧！');
+        this.getOrders();
+      });
+    },
+    refuse(orderId) {
+      refuseOrder(this, { orderId }).then(result => {
+        // console.log(result);
+        this.$toasted.show('对方已收到您的拒绝，期待下次合作！');
+        this.getOrders();
+      });
+    },
     reply(orderId) {
       confirmCreator(this, { orderId }).then(result => {
-        console.log(result);
+        // console.log(result);
+        this.$toasted.show('您已确认创作人，请等待对方完成创作！');
+        this.getOrders();
       });
+    },
+    confirmFinish(orderId, creatorId) {
+      this.$toasted.show('确认您已完成？', {
+        action: [
+          {
+            text: '取消',
+            onClick: (e, toastObject) => {
+              toastObject.goAway(0);
+            }
+          },
+          {
+            text: '确认',
+            onClick: (e, toastObject) => {
+              confirmFinish(this, { orderId }).then(result => {
+                // console.log(result);
+                this.$toasted.success('完成需求后可以分享自己的作品，提升您的接单成功率哦~');
+                this.getOrders();
+              });
+            }
+          }
+        ]
+      });
+
+    }
+  },
+  watch: {
+    $route(to, from) {
+      this.getOrders();
     }
   }
 };
 </script>
 
 <style lang="scss">
+a {
+  &:hover {
+    text-decoration: none;
+  }
+}
 .mgmt-container {
   display: flex;
   justify-content: center;
@@ -247,6 +313,20 @@ export default {
       color: #08af7f;
       &:hover {
         color: #aaa;
+      }
+    }
+    .opera_red {
+      display: inline-block;
+      width: 90px;
+      height: 35px;
+      line-height: 35px;
+      color: #fff;
+      background-color: #e60012;
+      border: 1px solid #e60012;
+      border-radius: 5px;
+      &:hover {
+        cursor: pointer;
+        text-decoration: none;
       }
     }
     .inopera {

@@ -7,7 +7,7 @@
     <div class="request-fliter">
       <div class="fliter" @click="getDemandsByCond('all')" :class="{click:filter==='all'}">全部需求</div>
       <div class="fliter" @click="getDemandsByCond('recent')" :class="{click:filter==='recent'}">最近发布</div>
-      <div class="fliter" @click="getDemandsByCond('payment')" :class="{click:filter==='payment'}">酬劳最高</div>
+      <div class="fliter" @click="getDemandsByCond('payment')" :class="{click:filter==='payment'}">酬劳较高</div>
       <div class="fliter" @click="getDemandsByCond('workTime')" :class="{click:filter==='workTime'}">工期较短</div>
     </div>
     <div class="show-requests">
@@ -43,40 +43,40 @@
 </template>
 <script>
 import Pagination from '../components/Pagination';
-import {getDemandList,getDemandsNum} from 'api';
+import { getDemandList, getDemandsNum } from 'api';
 
 export default {
-  created(){
+  created() {
     this.filter = 'all';
-    getDemandList(this,{condition:'all',pageSize:this.pageSize,currentPage:1}).then(result => {
+    getDemandList(this, { condition: 'all', pageSize: this.pageSize, currentPage: 1 }).then(result => {
       this.demands = result;
     });
     getDemandsNum(this).then(result => {
-      this.totalPages = Math.ceil(result/this.pageSize);
+      this.totalPages = Math.ceil(result / this.pageSize);
     });
   },
   data() {
     return {
       demands: [],
-      filter:'',
-      totalPages:0,
-      pageSize:3,
+      filter: '',
+      totalPages: 0,
+      pageSize: 6,
     };
   },
   components: {
     Pagination
   },
   methods: {
-    getDemandsByCond(condition){
-      if(condition){
-        this.filter = condition
+    getDemandsByCond(condition) {
+      if (condition) {
+        this.filter = condition;
       }
-      getDemandList(this,{ condition:condition,pageSize:this.pageSize,currentPage:1}).then(result => {
+      getDemandList(this, { condition, pageSize: this.pageSize, currentPage: 1 }).then(result => {
         this.demands = result;
       });
     },
     onPageItemClick(page) {
-      getDemandList(this,{condition:this.filter,pageSize:this.pageSize,currentPage:page}).then(result => {
+      getDemandList(this, { condition: this.filter, pageSize: this.pageSize, currentPage: page }).then(result => {
         this.demands = result;
       });
     },
@@ -89,6 +89,9 @@ export default {
 };
 </script>
 <style lang="scss">
+a {
+  color: #444;
+}
 .click {
   background-color: #08af7f;
   border-color: #08af7f;
@@ -98,7 +101,7 @@ export default {
   width: 100%;
   height: 300px;
   position: relative;
-  background-image: url('https://s3.amazonaws.com/snapwire/images/home/5491ec8e780eb7720f5e268a.jpg');
+  background-image: url('/public/bg1.jpg');
   background-position: center 55%;
   background-repeat: no-repeat;
   background-size: cover;
@@ -151,15 +154,16 @@ export default {
     z-index: 100;
     width: 25%;
     height: 300px;
-    margin: 0px 15px;
+    margin: 15px;
     background-color: #f7f7f7;
     background-size: cover;
     background-position: center center;
     background-repeat: no-repeat;
 
     .link {
-      &:hover {
-        color: #444;
+      &:hover,
+      &:hover .bottom h4 {
+        color: #08af7f;
       }
     }
     .other {

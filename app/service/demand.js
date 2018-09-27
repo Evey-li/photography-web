@@ -77,10 +77,8 @@ module.exports = app => {
         },
         {
           $match: {
-            status: '未完成',
-            creatorId: null,
+            finishTime: '',
             deleted: false
-
           }
         },
         {
@@ -114,17 +112,7 @@ module.exports = app => {
       }
       return demands;
     }
-    async checkDemand(demandId, creatorId) {
-      const demand = await this.ctx.model.Demand.findOne({
-        _id: demandId,
-        creatorId
-      });
-      if (!demand) {
-        return false;
-      } else {
-        return true;
-      }
-    }
+
     async update(demand) {
       const id = demand._id;
       delete demand._id;

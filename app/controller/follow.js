@@ -9,7 +9,7 @@ class FollowController extends Controller {
     } = this.ctx.request.body;
     let result = '';
     if (this.ctx.helper.checkNullOrUndefined(followId, followerId)) {
-      result = new Response(Response.PARAM_ERROR, null, '参数错误');
+      result = new Response(Response.PARAM_ERROR, null, '新增关注所需参数错误');
     } else {
       if (followId !== followerId) {
         const res = await this.ctx.service.follow.save({
@@ -45,7 +45,7 @@ class FollowController extends Controller {
     } = this.ctx.request.body;
     let result = '';
     if (this.ctx.helper.checkNullOrUndefined(followId, followerId)) {
-      result = new Response(Response.PARAM_ERROR, null, '参数错误');
+      result = new Response(Response.SUCCESS, false, '查询关注记录所需参数错误');
     } else {
       let tmp = '';
       const res = await this.ctx.service.follow.findFollowRecord(followId, followerId);

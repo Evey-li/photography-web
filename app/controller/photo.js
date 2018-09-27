@@ -14,6 +14,7 @@ class PhotoController extends Controller {
         width: photo.width,
         height: photo.height,
         creatorId: photo.creatorId,
+        demandId: null,
         imgUrl: photo.imgUrl,
         photoDesc: photo.photoDesc,
         categoryId: photo.categoryId,
@@ -147,10 +148,24 @@ class PhotoController extends Controller {
     }
     this.ctx.body = result;
   }
+  async getPhotosForIndex() {
+    let result = '';
+    const photos = await this.ctx.service.photo.list();
+    if (!photos) {
+      result = new Response(Response.NULL_RESULT, null, '首页摄影作品获取失败');
+    } else {
+      const res = [];
+      res.push(photos[14]);
+      res.push(photos[17]);
+      res.push(photos[19]);
+      result = new Response(Response.SUCCESS, res, null);
+    }
+    this.ctx.body = result;
+  }
+
   async removePhotoById(pid) {
     this.ctx.body = await this.ctx.service.photo.removeCategoryById(pid);
   }
-
   async list() {
     let result = '';
     const photos = await this.ctx.service.photo.list();
@@ -163,7 +178,6 @@ class PhotoController extends Controller {
     result = new Response(Response.SUCCESS, photos, null);
     this.ctx.body = result;
   }
-
   async groupByCategory() {
     let result = '';
     const res = await this.ctx.service.photo.groupByCategory();

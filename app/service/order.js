@@ -65,6 +65,25 @@ module.exports = app => {
         }
       }]);
     }
+    async checkOrder(demandId, creatorId) {
+      const order = await this.ctx.model.Order.findOne({
+        demandId,
+        creatorId
+      });
+      // console.log(order);
+      if (order) {
+        return order.status;
+      } else {
+        return '';
+      }
+    }
+    async getOrdersByUserId(userId) {
+      const orders = await this.ctx.model.Order.find({
+        creatorId: userId,
+        status: '已完成'
+      });
+      return orders;
+    }
   }
   return Order;
 };

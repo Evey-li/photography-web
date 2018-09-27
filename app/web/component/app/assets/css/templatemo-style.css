@@ -166,50 +166,46 @@ p {
   background-repeat: none;
   opacity: 0;
   z-index: 0;
-  -webkit-backface-visibility: hidden;
+  /* -webkit-backface-visibility: hidden;
   -webkit-animation: imageAnimation 72s linear infinite 0s;
   -moz-animation: imageAnimation 72s linear infinite 0s;
   -o-animation: imageAnimation 72s linear infinite 0s;
-  -ms-animation: imageAnimation 72s linear infinite 0s;
-  animation: imageAnimation 72s linear infinite 0s;
+  -ms-animation: imageAnimation 72s linear infinite 0s; */
+  animation: imageAnimation 40s linear infinite 0s;
 }
 
 .cb-slideshow li:nth-child(1) {
-  background-image: url(../img/letter_bg_01.jpg)
+  background-image: url(../img/bg5.jpg)
 }
 
 .cb-slideshow li:nth-child(2) {
-  background-image: url(../img/letter_bg_02.jpg);
-  -webkit-animation-delay: 12s;
+  background-image: url(../img/bg3.jpg);
+  /* -webkit-animation-delay: 12s;
   -moz-animation-delay: 12s;
   -o-animation-delay: 12s;
-  -ms-animation-delay: 12s;
-  animation-delay: 12s;
+  -ms-animation-delay: 12s; */
+  animation-delay: 8s;
 }
 
 .cb-slideshow li:nth-child(3) {
-  background-image: url(../img/letter_bg_03.jpg);
-  -webkit-animation-delay: 24s;
+  background-image: url(../img/letter_bg_01.jpg);
+  /* -webkit-animation-delay: 24s;
   -moz-animation-delay: 24s;
   -o-animation-delay: 24s;
-  -ms-animation-delay: 24s;
-  animation-delay: 24s;
+  -ms-animation-delay: 24s; */
+  animation-delay: 16s;
 }
 
 .cb-slideshow li:nth-child(4) {
-  background-image: url(../img/letter_bg_04.jpg);
-  animation-delay: 36s;
+  background-image: url(../img/letter_bg_02.jpg);
+  animation-delay: 24s;
 }
 
 .cb-slideshow li:nth-child(5) {
-  background-image: url(../img/letter_bg_05.jpg);
-  animation-delay: 48s;
+  background-image: url(../img/bg4.jpg);
+  animation-delay: 32s;
 }
 
-.cb-slideshow li:nth-child(6) {
-  background-image: url(../img/letter_bg_06.jpg);
-  animation-delay: 60s;
-}
 
 @keyframes imageAnimation {
   0% {

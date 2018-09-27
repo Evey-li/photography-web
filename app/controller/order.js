@@ -53,6 +53,7 @@ class OrderController extends Controller {
         }
         // 合成前台需要的数据
         data.push({
+          orderId: orders[i]._id,
           demandId: orders[i].demand._id,
           title: orders[i].demand.title,
           demander: orders[i].demander,
@@ -134,6 +135,94 @@ class OrderController extends Controller {
       demand.status = '创作中';
       await this.ctx.service.demand.update(demand);
       result = new Response(Response.SUCCESS, 'success', null);
+    }
+    this.ctx.body = result;
+  }
+  async confirmFinish() {
+    let result = '';
+    const orderId = this.ctx.request.body.orderId;
+    if (orderId) {
+      const order = await this.ctx.service.order.getOrderById(orderId);
+      if (order) {
+        const demand = await this.service.demand.getDemandById(order.demandId);
+        if (demand) {
+          /* 更新订单表状态、完成时间 */
+          order.status = '已完成';
+          order.finishDate = moment().format('LL');
+          await this.ctx.service.order.update(order);
+          /* 更新需求表状态、完成时间 、创作人ID*/
+          demand.status = '已完成';
+          demand.finishTime = moment().format('LL');
+          demand.creatorId = order.creatorId;
+          await this.ctx.service.demand.update(demand);
+          result = new Response(Response.SUCCESS, demand, null);
+        }
+      } else {
+        result = new Response(Response.NULL_RESULT, null, '数据库中无该订单！');
+      }
+    } else {
+      result = new Response(Response.PARAM_ERROR, null, '订单号为空！');
+    }
+    this.ctx.body = result;
+  }
+  async receiveOrder() {
+    let result = '';
+    const orderId = this.ctx.request.body.orderId;
+    if (!orderId) {
+      result = new Response(Response.PARAM_ERROR, null, '订单ID为空');
+    } else {
+      // 更新订单表状态、接单日期
+      const order = await this.ctx.service.order.getOrderById(orderId);
+      order.status = '创作中';
+      order.receiveDate = moment().format('LL');
+      await this.ctx.service.order.update(order);
+      // 更新需求表状态、创作人ID
+      const demand = await this.ctx.service.demand.getDemandById(order.demandId);
+      demand.status = '创作中';
+      demand.creatorId = order.creatorId;
+      await this.ctx.service.demand.update(demand);
+      result = new Response(Response.SUCCESS, 'success', null);
+    }
+    this.ctx.body = result;
+  }
+  async refuseOrder() {
+    let result = '';
+    const orderId = this.ctx.request.body.orderId;
+    if (!orderId) {
+      result = new Response(Response.PARAM_ERROR, null, '订单ID为空');
+    } else {
+      // 更新订单表状态
+      const order = await this.ctx.service.order.getOrderById(orderId);
+      order.status = '订单关闭';
+      const res = await this.ctx.service.order.update(order);
+      result = new Response(Response.SUCCESS, res, null);
+    }
+    this.ctx.body = result;
+  }
+  async checkOrder() {
+    let result = '';
+    const {
+      demandId,
+      creatorId
+    } = this.ctx.request.body;
+    if (this.ctx.helper.checkNullOrUndefined(demandId, creatorId)) {
+      result = new Response(Response.SUCCESS, null, '订单查询参数有误');
+    } else {
+      const res = await this.ctx.service.order.checkOrder(demandId, creatorId);
+      result = new Response(Response.SUCCESS, res, null);
+    }
+    this.ctx.body = result;
+  }
+  async getSuccesOrders() {
+    const { userId } = this.ctx.request.body;
+    let result = '';
+    if (userId) {
+      const res = await this.ctx.service.order.getOrdersByUserId(userId);
+      if (res) {
+        result = new Response(Response.SUCCESS, res, null);
+      }
+    } else {
+      result = new Response(Response.PARAM_ERROR, null, '获取用户已完成订单参数为空');
     }
     this.ctx.body = result;
   }

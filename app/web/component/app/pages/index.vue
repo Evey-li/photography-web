@@ -8,15 +8,15 @@
         <li>3</li>
         <li>4</li>
         <li>5</li>
-        <li>6</li>
       </ul>
       <div class="container-fluid">
         <div class="row cb-slideshow-text-container ">
           <div class="tm-content col-xl-6 col-sm-8 col-xs-8 ml-auto section">
             <header class="mb-5">
-              <h1 class="content-title">Letter</h1>
+              <h2 class="content-title">需求与创作之间的双向选择</h2>
             </header>
-            <p class="mb-5">A sign-up letter template with three background images shuffling by fade in out movements. Thank you for visiting our site!</p>
+            <p class="mb-5" id="web_intro">Photography平台可以让您轻松获取所需的独特摄影作品，创作人会根据您的条件创造出高质量的视觉效果。<br>摄影爱好人可以聚集于此，享受爱好创造价值的别样乐趣。
+            </p>
           </div>
         </div>
       </div>
@@ -43,36 +43,28 @@
     </div>
 
     <div class="photo-album">
-      <h3 class="title">来自世界的摄影作品</h3>
+      <div class="top-bar">
+        <p class="title">
+          来自世界的摄影作品
+        </p>
+
+        <router-link to="/gallery" class="view-more">查看更多
+          <i class="icon-double-angle-right"></i>
+        </router-link>
+
+      </div>
       <div class="photos-show">
-        <div class="hovereffect">
-          <img class="img-responsive" src="../assets/img/show-1.jpg" alt="">
+        <div class="hovereffect" v-for="(item,index) in photosData" :key="index">
+          <img class="img-responsive" :src="item.imgUrl" alt="">
           <div class="overlay">
-            <h2>Effect 13</h2>
-            <p>
-              <a href="#">了解更多</a>
-              <i class="icon-double-angle-right"></i>
-            </p>
-          </div>
-        </div>
-        <div class="hovereffect">
-          <img class="img-responsive" src="../assets/img/show-2.jpg" alt="">
-          <div class="overlay">
-            <h2>Effect 13</h2>
-            <p>
-              <a href="#">了解更多</a>
-              <i class="icon-double-angle-right"></i>
-            </p>
-          </div>
-        </div>
-        <div class="hovereffect">
-          <img class="img-responsive" src="../assets/img/show-3.jpg" alt="">
-          <div class="overlay">
-            <h2>Effect 13</h2>
-            <p>
-              <a href="#">了解更多</a>
-              <i class="icon-double-angle-right"></i>
-            </p>
+            <!-- <p>
+              <router-link to="/gallery">查看更多</router-link>
+            </p> -->
+            <img :src="item.user.headImgUrl" alt="" class="headImg">
+            <h2>创作人：
+              <router-link :to="{name:'user',params: {id:item.user._id}}">{{item.user.userName}}</router-link>
+            </h2>
+
           </div>
         </div>
       </div>
@@ -84,7 +76,7 @@
           <h4>在这儿，你可以……</h4>
           <div class="content-item">
             <h5>分享自己的摄影作品</h5>
-            <p>上传你的得意之作，获得摄友们的点赞和关注，一起讨论你热爱的摄影。</p>
+            <p>上传你的得意之作，获得摄友们的点赞和关注，分享共同热爱的摄影。</p>
           </div>
           <div class="content-item">
             <h5>遇到大师级摄影佳作</h5>
@@ -114,11 +106,22 @@
 </template>
 <script>
 import particlesJS from 'asset/js/particles.js';
-import {mapMutations,mapState } from 'vuex';
+import { mapMutations, mapState } from 'vuex';
+import { getPhotosForIndex } from 'api';
 // 挂载到全局上，方面里面的particlesJS调用原生的document
 window.particlesJS = particlesJS;
 export default {
- 
+  created() {
+    getPhotosForIndex(this).then(result => {
+      this.photosData = result;
+      console.log(result);
+    });
+  },
+  data() {
+    return {
+      photosData: []
+    };
+  },
   mounted() {
     window.particlesJS('particles-js', {
       particles: {
@@ -237,14 +240,14 @@ export default {
       }
     });
   },
-  computed:{
+  computed: {
     ...mapState(['user'])
   },
   methods: {
     scrollNext() {
-      let jump = this.$refs.nextPart;
+      const jump = this.$refs.nextPart;
       // 获取需要滚动的距离
-      let total = jump.offsetTop - 60;
+      const total = jump.offsetTop - 60;
       window.scrollTo({
         top: total,
         behavior: 'smooth'
@@ -264,10 +267,16 @@ export default {
   overflow: hidden;
 }
 .content-title {
-  font-size: 60px;
+  font-size: 40px;
 }
 .container-fluid .mb-5 {
   font-size: 24px;
+}
+
+#web_intro {
+  font-size: 22px;
+  font-family: '宋体';
+  line-height: 40px;
 }
 /*下拉箭头的浮动样式*/
 .go-bottom-btn {
@@ -322,10 +331,33 @@ export default {
   display: block;
 }
 /*摄影作品展示区*/
-.photo-album .title {
+.photo-album .top-bar {
+  text-align: center;
+  position: relative;
+}
+.photo-album p {
   color: #444;
   text-align: center;
   margin-bottom: 35px;
+}
+.photo-album .title {
+  font-size: 28px;
+}
+.photo-album a {
+  color: #444;
+  text-decoration-style: none;
+}
+.photo-album .view-more {
+  font-size: 16px;
+  margin-left: 20px;
+  position: absolute;
+  right: 35%;
+  top: 15px;
+}
+.photo-album .view-more:hover {
+  cursor: pointer;
+  color: #08af7f;
+  text-decoration: none;
 }
 .photo-album .photos-show {
   height: 300px;
@@ -356,6 +388,7 @@ export default {
   -ms-transform: scale(0, 1);
   transform: scale(0, 1); */
 }
+
 .hovereffect:hover .overlay {
   border-bottom: 1px solid #fff;
   border-top: 1px solid #fff;
@@ -398,11 +431,19 @@ export default {
   -webkit-transform: translate3d(0, -100%, 0);
   transform: translate3d(0, -100%, 0);
 }
+.hovereffect .headImg {
+  width: 70px;
+  height: 70px;
+  border-radius: 50%;
+  opacity: 0;
+  filter: alpha(opacity=0);
+  margin-top: 10px;
+}
 .hovereffect a,
-.hovereffect p {
+.hovereffect .headImg {
   flex: 1;
   color: #fff;
-  padding: 1em 0;
+  /* padding: 1em 0; */
   opacity: 0;
   filter: alpha(opacity=0);
   -webkit-transition: opacity 0.35s, -webkit-transform 0.35s;
@@ -411,7 +452,7 @@ export default {
   transform: translate3d(0, 100%, 0);
 }
 .hovereffect:hover a,
-.hovereffect:hover p,
+.hovereffect:hover .headImg,
 .hovereffect:hover h2 {
   opacity: 1;
   filter: alpha(opacity=100);
@@ -456,7 +497,7 @@ export default {
   width: 100%;
   height: 500px;
   margin-top: 80px;
-  background-image: url('https://s3.amazonaws.com/snapwire/images/home/541dc36373ac9979736e08f0.jpg');
+  background-image: url('/public/bg.jpg');
   background-position: center 20%;
   background-repeat: no-repeat;
   background-size: cover;

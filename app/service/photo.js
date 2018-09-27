@@ -150,7 +150,6 @@ module.exports = app => {
           'user.userDesc': 0,
           'user.country': 0,
           'user.city': 0,
-          'user.headImgUrl': 0,
         }
       }
       ]);

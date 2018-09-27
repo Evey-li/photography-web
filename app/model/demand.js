@@ -13,7 +13,7 @@ module.exports = app => {
     payment: Number,
     email: String,
     tel: String,
-    // creatorId: ObjectId,
+    creatorId: ObjectId,
     releaseTime: String,
     // receiveTime: String,
     finishTime: String,

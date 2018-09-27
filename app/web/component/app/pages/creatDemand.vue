@@ -25,7 +25,7 @@
       <hr>
       <p v-if="errors.length">
         <ul>
-          <li v-for="error in errors">
+          <li v-for="(error,index) in errors" :key="index">
             <span>
               {{ error }}
             </span>
@@ -43,7 +43,7 @@
 
         <div class="demander">
           <label for="demander">
-            <i class="icon-asterisk"></i> 发布人：</label><input type="text" name="demander" :value="user.userName" readonly>
+            <i class="icon-asterisk"></i> 发布人：</label><input type="text" name="demander" :value="user.realName" readonly>
         </div>
 
       </div>
@@ -98,91 +98,99 @@
 
 </template>
 <script>
-import {mapState} from 'vuex';
+import { mapState } from 'vuex';
 import { log } from 'util';
-import {addDemand} from 'api';
+import { addDemand } from 'api';
 import {
   pca,
   pcaa
 } from 'area-data'; // v5 or higher
 export default {
-  computed:{
-    ...mapState(['invitee','user'])
+  computed: {
+    ...mapState(['invitee', 'user'])
   },
-  created(){
+  created() {
     this.pcaa = pcaa;
 
 
-    if(this.invitee){
+    if (this.invitee) {
       this.demandData.creatorId = this.invitee._id;
-    }else{
+    } else {
       this.demandData.creatorId = null;
     }
-    if(this.user){
+    if (this.user) {
       this.demandData.demanderId = this.user._id;
       this.demandData.email = this.user.email;
       this.demandData.tel = this.user.tel;
     }
-    
-  },
-  data(){
-    return{
-      errors: [],
-      addrData:{},
-      demandData:{
-        title:'',
-        demanderId:'',
-        demandDesc:'',
-        workTime:'',
-        payment:'',
-        email:'',
-        tel: '',
-        creatorId:'',
-        preference:'',
-        place:'',
-      }
-    }
-  },
-  methods:{
-    release(){
-       this.errors = [];
-       let address = this.addrData;
 
-       if (!this.demandData.title) {
-         this.errors.push("请您填写项目名");
-       }
-       if(!this.demandData.demandDesc){
-         this.errors.push("请填写具体要求给创作人")
-       }
-       if(!this.demandData.workTime){
-         this.errors.push("请填写留给创作人的周转时间")
-       }
-       if(!this.demandData.payment){
-         this.errors.push("请给出您的丰厚奖励，让创作人为您更加卖力地创作")
-       }
-       if(!address.length){
-         this.errors.push("请选择拍摄地点")
-       }else{
-         this.demandData.place = pcaa['86'][address[0]]+pcaa[address[0]][address[1]]+pcaa[address[1]][address[2]];
-       }
-       if (!this.demandData.email) {
-         this.errors.push('请您填写邮箱地址，方便创作人联系您');
-       } else if (!this.validEmail(this.demandData.email)) {
-         this.errors.push('请填写有效的邮箱地址');
-       }
-       if(!this.demandData.tel){
-         this.errors.push("请填写您的常用联系电话，方便创作人联系您")
-       }
-       if (!this.errors.length) {
-         addDemand(this,{demand:this.demandData}).then(result => {
-           this.$toasted.show("需求发布成功！")
-         });
-         return true;
-       }
-      
+  },
+  data() {
+    return {
+      errors: [],
+      addrData: {},
+      demandData: {
+        title: '',
+        demanderId: '',
+        demandDesc: '',
+        workTime: '',
+        payment: '',
+        email: '',
+        tel: '',
+        creatorId: '',
+        preference: '',
+        place: '',
+      }
+    };
+  },
+  methods: {
+    release() {
+      if (!this.user._id) {
+        this.$toasted.error('请先注册或登录需求人账户');
+      } else {
+        this.errors = [];
+        const address = this.addrData;
+
+        if (!this.demandData.title) {
+          this.errors.push('请您填写项目名');
+        }
+        if (!this.demandData.demandDesc) {
+          this.errors.push('请填写具体要求给创作人');
+        }
+        if (!this.demandData.workTime) {
+          this.errors.push('请填写留给创作人的周转时间');
+        }
+        if (!this.demandData.payment) {
+          this.errors.push('请给出您的丰厚奖励，让创作人为您更加卖力地创作');
+        }
+        if (!address.length) {
+          this.errors.push('请选择拍摄地点');
+        } else {
+          this.demandData.place = pcaa['86'][address[0]] + pcaa[address[0]][address[1]] + pcaa[address[1]][address[2]];
+        }
+        if (!this.demandData.email) {
+          this.errors.push('请您填写邮箱地址，方便创作人联系您');
+        } else if (!this.validEmail(this.demandData.email)) {
+          this.errors.push('请填写有效的邮箱地址');
+        }
+        if (!this.demandData.tel) {
+          this.errors.push('请填写您的常用联系电话，方便创作人联系您');
+        }
+        if (!this.errors.length) {
+          addDemand(this, { demand: this.demandData }).then(result => {
+            if (result === 'SUCCESS') {
+              this.$toasted.show('需求发布成功！');
+              this.$router.push('/demandMgmt');
+            } else {
+              this.$toasted.error('需求发布失败，请重试！');
+            }
+          });
+          return true;
+        }
+      }
     },
-    validEmail: function (email) {
-      var re = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+    validEmail(email) {
+      const re = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
       return re.test(email);
     }
   }

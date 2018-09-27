@@ -15,7 +15,7 @@
             <span>作品分类：</span>
             <select v-model="photo.categoryId">
               <option disabled value="">请选择</option>
-              <option v-for="category in categories" v-bind:value="category._id">
+              <option v-for="category in categories" v-bind:value="category._id" :key="category._id">
                 {{ category.name }}
               </option>
             </select>
@@ -40,32 +40,32 @@
 </template>
 
 <script>
-import {uploadFile,categoryList,uploadPhoto} from 'api';
-import {mapState} from 'vuex';
+import { uploadFile, categoryList, uploadPhoto } from 'api';
+import { mapState } from 'vuex';
 import placeHolder from '../assets/img/upload-img.png';
 import { log } from 'util';
 export default {
-  data(){
-    return{
-      photo:{
-        imgUrl:placeHolder,
-        creatorId:'',
-        width:0,
-        height:0,
-        photoDesc:'',
-        categoryId:''
+  data() {
+    return {
+      photo: {
+        imgUrl: placeHolder,
+        creatorId: '',
+        width: 0,
+        height: 0,
+        photoDesc: '',
+        categoryId: ''
       },
-      categories:[]
-    }
+      categories: []
+    };
   },
-  computed:{
+  computed: {
     ...mapState(['user']),
   },
-  created(){
+  created() {
     categoryList(this).then(result => {
       // console.log(result);
       this.categories = result;
-    })
+    });
   },
   methods: {
     closeMyself() {
@@ -74,51 +74,50 @@ export default {
       this.$emit('closeMyself');
     },
     fileClick() {
-      document.getElementById('upload_photo').click()
+      document.getElementById('upload_photo').click();
     },
     fileChange(el) {
       if (!el.target.files[0].size) return;
-      let _this = this;
-      let file = el.target.files[0];
-      let reader = new FileReader();
-      let image = new Image();
+      const _this = this;
+      const file = el.target.files[0];
+      const reader = new FileReader();
+      const image = new Image();
       reader.readAsDataURL(file);
       reader.onload = function () {
         file.src = this.result;
-        image.onload=function(){
-          file.width=image.width;
-          file.height=image.height;
+        image.onload = function () {
+          file.width = image.width;
+          file.height = image.height;
           _this.photo.width = file.width;
-          _this.photo.height = file.height;     
+          _this.photo.height = file.height;
         };
         image.src = file.src;
       };
 
-      uploadFile(this,el.target.files[0]).then(result => {
-          this.photo.imgUrl = result.url;
-          // console.log(result.url);
-          // console.log("********************");
+      uploadFile(this, el.target.files[0]).then(result => {
+        this.photo.imgUrl = result.url;
+        // console.log(result.url);
+        // console.log("********************");
       });
-      el.target.value = ''
+      el.target.value = '';
     },
-    addPhoto(){
-     
-      if(!this.photo.categoryId){
-        this.$toasted.show("不要忘记作品分类哦~")
-      }else{
-        if(!this.photo.photoDesc){
-          this.$toasted.show("不要忘记作品描述哦~")
-        }else{
+    addPhoto() {
+      if (!this.photo.categoryId) {
+        this.$toasted.show('不要忘记作品分类哦~');
+      } else {
+        if (!this.photo.photoDesc) {
+          this.$toasted.show('不要忘记作品描述哦~');
+        } else {
           this.photo.creatorId = this.user._id;
-          
-          uploadPhoto(this,{photo:this.photo}).then(result => {
-            if(result){
-              this.$toasted.show("您的作品已分享成功！");
+
+          uploadPhoto(this, { photo: this.photo }).then(result => {
+            if (result) {
+              this.$toasted.success('您的作品已分享成功！');
               this.$emit('closeMyself');
-            }else{
-              this.$toasted.show("作品分享失败，请您重试！")
+            } else {
+              this.$toasted.error('作品分享失败，请您重试！');
             }
-          })
+          });
         }
       }
     }

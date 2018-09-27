@@ -10,9 +10,9 @@ class DemandController extends Controller {
     } = this.ctx.request.body;
     let result = '';
     if (!demand) {
-      result = new Response(Response.PARAM_ERROR, null, '参数错误');
+      result = new Response(Response.PARAM_ERROR, null, '需求信息为空！');
     } else {
-      const res = await this.ctx.service.demand.save({
+      const newDemand = await this.ctx.service.demand.save({
         title: demand.title,
         demanderId: demand.demanderId,
         demandDesc: demand.demandDesc,
@@ -20,15 +20,26 @@ class DemandController extends Controller {
         payment: demand.payment,
         email: demand.email,
         tel: demand.tel,
-        creatorId: demand.creatorId,
         preference: demand.preference,
         releaseTime: moment().format('LL'),
         finishTime: '',
-        status: '未完成',
+        status: '待接单',
         place: demand.place,
         deleted: false
       });
-      result = new Response(Response.SUCCESS, res, null);
+      let order = '';
+      if (demand.creatorId) {
+        order = await this.ctx.service.order.save({
+          demandId: newDemand._id,
+          creatorId: demand.creatorId,
+          receiveDate: '',
+          finishDate: '',
+          status: '待接单',
+          invited: true,
+          deleted: false,
+        });
+      }
+      result = new Response(Response.SUCCESS, 'SUCCESS', null);
     }
     this.ctx.body = result;
   }
@@ -54,7 +65,7 @@ class DemandController extends Controller {
       return;
     } else {
       const demandList = await this.ctx.service.demand.getDemandList(condition, pageSize, currentPage);
-      console.log(demandList);
+      // console.log(demandList);
 
       if (demandList) {
         result = new Response(Response.SUCCESS, demandList, null);
@@ -68,7 +79,7 @@ class DemandController extends Controller {
     let result = '';
     const demandId = this.ctx.request.body.demandId;
     if (!demandId) {
-      result = new Response(Response.PARAM_ERROR, null, '参数错误');
+      result = new Response(Response.PARAM_ERROR, null, '需求ID参数错误');
     } else {
       const demand = await this.ctx.service.demand.getDemandById(demandId);
       result = new Response(Response.SUCCESS, demand, null);
@@ -111,28 +122,7 @@ class DemandController extends Controller {
     }
     this.ctx.body = result;
   }
-  async checkDemand() {
-    let result = '';
-    const {
-      demandId,
-      creatorId
-    } = this.ctx.request.body;
-    if (this.ctx.helper.checkNullOrUndefined(demandId, creatorId)) {
-      result = new Response(Response.PARAM_ERROR, null, '参数有误');
-    } else {
-      const res = await this.ctx.service.demand.checkDemand(demandId, creatorId);
-      result = new Response(Response.SUCCESS, res, null);
-    }
-    this.ctx.body = result;
-  }
-  async confirmFinish() {
-    const demand_id = this.ctx.request.body.demandId;
-    const demand = await this.service.demand.getDemandById(demand_id);
-    demand.status = '已完成';
-    demand.finishTime = moment().format('LL');
-    const res = await this.ctx.service.demand.update(demand);
-    this.ctx.body = new Response(Response.SUCCESS, res, null);
-  }
+
   async list() {
     let result = '';
     // const userData = [];

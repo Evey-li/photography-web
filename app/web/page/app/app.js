@@ -16,7 +16,7 @@ Vue.use(VueAreaLinkage);
 Vue.use(Vuex);
 Vue.use(Toasted, {
   position: 'top-center',
-  duration: 3000,
+  duration: 5000,
 });
 // import Layout from 'component/layout/app';
 

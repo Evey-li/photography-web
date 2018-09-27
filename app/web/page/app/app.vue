@@ -39,7 +39,7 @@
         <a href="#">友情链接</a>
         <a href="http://localhost:8080/login">进入后台</a>
       </div>
-      <div class="foot2">© 2018 by Evey</div>
+      <div class="foot2">©2018 by 社会主义核心价值观非常队</div>
     </div>
   </div>
 </template>
@@ -75,7 +75,7 @@ export default {
       logout(this).then((result) => {
         console.log(result);
         this.userLogout();
-        localStorage.removeItem("user");
+        localStorage.removeItem('user');
         this.$router.push('/index');
       });
     }

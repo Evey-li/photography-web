@@ -1,7 +1,7 @@
 <template>
   <div ref="content">
     <div class="gallery-header">
-      <h2>The Photo Gallery</h2>
+      <h2>photography摄影集</h2>
       <div :class="{focus:inputFocus}" class="search-box">
         <input @blur="inputFocus=false" @focus="inputFocus=true" @keyup.enter="searchPhoto" v-model="searchKey" type="text" placeholder="发现你感兴趣的作品">
         <span class="search-btn">
@@ -140,20 +140,20 @@ export default {
     onLike(index) {
       if (!this.user._id) {
         this.$router.push('/login');
-        this.$toasted.show('您还没登录！登录了再点赞也不晚哦~')
-      }
-
-      let photo = this.items[index];
-      photo.likeStatus = !photo.likeStatus;
-      if (photo.likeStatus === true) {
-        addLike(this, { photoId: photo._id, admirerId: this.user._id }).then(result => {
-          console.log('added!');
-        });
-      }
-      if (photo.likeStatus === false) {
-        removeLike(this, { photoId: photo._id, admirerId: this.user._id }).then(result => {
-          console.log('removed!');
-        })
+        this.$toasted.show('您还没登录！登录了再点赞也不晚哦~');
+      } else {
+        const photo = this.items[index];
+        photo.likeStatus = !photo.likeStatus;
+        if (photo.likeStatus === true) {
+          addLike(this, { photoId: photo._id, admirerId: this.user._id }).then(result => {
+            console.log('added!');
+          });
+        }
+        if (photo.likeStatus === false) {
+          removeLike(this, { photoId: photo._id, admirerId: this.user._id }).then(result => {
+            console.log('removed!');
+          });
+        }
       }
     },
     showDialog(item) {
@@ -187,7 +187,7 @@ export default {
   width: 100%;
   height: 300px;
   position: relative;
-  background-image: url('https://s3.amazonaws.com/snapwire/images/home/541dc36373ac9979736e08f0.jpg');
+  background-image: url('/public/bg.jpg');
   background-position: center 20%;
   background-repeat: no-repeat;
   background-size: cover;

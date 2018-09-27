@@ -69,12 +69,12 @@
             </div>
           </div> -->
         <!-- <hr> -->
-        <div class="received" v-if="received">
-          <router-link to="/demandMgmt">
+        <div class="received" v-if="receivedMsg">
+          <p>您已接下该需求，目前订单状态是{{receivedMsg}}</p>
+          <router-link to="/demandMgmt" class="link">
             查看其它已接需求
             <i class="icon-double-angle-right"></i>
           </router-link>
-
         </div>
         <div class="receive-demand" @click="receiveDemand(demand._id)" v-else>
           <div class="receive-btn" v-show="user.userType === 0">接下需求</div>
@@ -85,7 +85,7 @@
 </template>
 
 <script>
-import { getDemandById, addOrder, checkDemand } from 'api';
+import { getDemandById, addOrder, checkOrder } from 'api';
 import { mapState } from 'vuex';
 import { log } from 'util';
 
@@ -95,19 +95,20 @@ export default {
     getDemandById(this, { demandId: this.id }).then(result => {
       this.demand = result;
     });
-    checkDemand(this, { demandId: this.id, creatorId: this.user._id }).then(result => {
-      this.received = result;
+    checkOrder(this, { demandId: this.id, creatorId: this.user._id }).then(result => {
+      this.receivedMsg = result;
+      console.log(result);
     });
   },
   watch: {
     $route(to, from) {
-      const tmp = to.path.split("/")
+      const tmp = to.path.split('/');
       if (tmp[1] === 'demandDetail' && tmp[2]) {
         getDemandById(this, { demandId: tmp[2] }).then(result => {
           this.demand = result;
         });
-        checkDemand(this, { demandId: tmp[2], creatorId: this.user._id }).then(result => {
-          this.received = result;
+        checkOrder(this, { demandId: tmp[2], creatorId: this.user._id }).then(result => {
+          this.receivedMsg = result;
         });
       }
     }
@@ -150,7 +151,7 @@ export default {
             'https://images.snapwi.re/1f2a/59bc2f192a3919f2778b4582.w314.h314.jpg'
         }
       ],
-      received: false
+      receivedMsg: false
     };
   },
   methods: {
@@ -272,6 +273,9 @@ export default {
     color: #08af7f;
     font-size: 22px;
     font-family: '宋体';
+    .link {
+      color: #08af7f;
+    }
     &:hover {
       cursor: pointer;
       text-decoration: none;

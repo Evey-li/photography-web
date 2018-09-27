@@ -45,6 +45,10 @@
               <i class="icon-eye-open"></i>
               <span class="follows">{{followsNum}} </span>关注
             </div>
+            <div>
+              <i class="icon-paper-clip"></i>
+              <span class="follows">{{successOrders}} </span>成功订单
+            </div>
           </div>
           <div class="invite" v-show="!isOwner">
             <span class="invite-btn">发出邀请</span>
@@ -63,7 +67,7 @@
     </div>
 
     <div class="user-photos">
-      <div class="filter">
+      <!-- <div class="filter">
         <div>
           <span>全部作品 </span>
           <span class="total-photos">11</span>
@@ -76,7 +80,7 @@
           <span>赞过作品 </span>
           <span class="total-photos">8</span>
         </div>
-      </div>
+      </div> -->
       <div class="tab-photos">
         <waterfall :min-line-gap="250" :max-line-gap="350" :line-gap="300" :watch="items" :auto-resize="true">
           <!-- each component is wrapped by a waterfall slot -->
@@ -96,7 +100,7 @@ import Waterfall from 'vue-waterfall/lib/waterfall';
 import WaterfallSlot from 'vue-waterfall/lib/waterfall-slot';
 import UploadDialog from '../components/UploadDialog';
 import { mapState } from 'vuex';
-import { getUserById } from 'api';
+import { getUserById, getSuccesOrders } from 'api';
 import { getfollowers, getfollows, findFollowRecord, addFollow, removeFollow } from 'api';
 import { getPhotosByCreatorId } from 'api';
 import { Result } from 'range-parser';
@@ -139,6 +143,7 @@ export default {
       currentUser: {},
       fansNum: 0,
       followsNum: 0,
+      successOrders: 0,
       isFollowed: true
     };
   },
@@ -182,24 +187,29 @@ export default {
         .then(result => {
           this.followsNum = result.length;
         });
+      getSuccesOrders(this, { userId: uId }).then(result => {
+        if (result) {
+          this.successOrders = result.length;
+        }
+      });
     },
     backgroundImgStyle(image) {
       return {
         'background-image': `url(${image})`
       };
     },
-    addItems: function() {
+    addItems() {
       if (!this.isBusy && this.items.length < 500) {
         this.isBusy = true;
         this.items.push.apply(this.items, ItemFactory.get(50));
       }
     },
-    shuffle: function() {
-      this.items.sort(function() {
+    shuffle() {
+      this.items.sort(function () {
         return Math.random() - 0.5;
       });
     },
-    reflowed: function() {
+    reflowed() {
       this.isBusy = false;
     },
     showUploadDialog() {
@@ -210,20 +220,21 @@ export default {
     closeUploadDialog() {
       this.dialogShow = false;
       this.$refs.userContent.parentNode.parentNode.parentNode.className = '';
+      this.getPhotosByCreatorId(this.$route.params.id);
     },
-    follow(followId){
-      if(followId === this.user._id){
-        this.$toasted.show("自己就不用关注自己咯~")
-      }else{
+    follow(followId) {
+      if (followId === this.user._id) {
+        this.$toasted.show('自己就不用关注自己咯~');
+      } else {
         this.isFollowed = true;
-        addFollow(this,{followId:followId,followerId:this.user._id}).then(result => {
+        addFollow(this, { followId, followerId: this.user._id }).then(result => {
           this.$toasted.show('关注成功！');
-         });
+        });
       }
     },
-    unfollow(followId){
-       this.isFollowed = false;
-       removeFollow(this,{followId:followId,followerId:this.user._id}).then(result => {
+    unfollow(followId) {
+      this.isFollowed = false;
+      removeFollow(this, { followId, followerId: this.user._id }).then(result => {
         this.$toasted.show('已取消关注！');
       });
     }
